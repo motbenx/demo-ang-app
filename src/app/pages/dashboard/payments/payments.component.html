@@ -1,0 +1,78 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Payments</h1>
+      <p class="page-subtitle">Track all incoming and outgoing payment transactions</p>
+    </div>
+    <button tuiButton appearance="primary" size="s">
+      <tui-icon icon="@tui.download" />
+      Export
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    @for (stat of stats(); track stat.label) {
+      <div class="stat-card">
+        <div class="stat-icon" [style.background]="stat.color + '18'" [style.color]="stat.color">
+          <tui-icon [icon]="stat.icon" />
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stat.value }}</span>
+          <span class="stat-label">{{ stat.label }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Transaction History</span>
+      <span class="record-count">{{ payments().length }} transactions</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Payment ID</th>
+            <th>Certificate</th>
+            <th>Customer</th>
+            <th>Dealer</th>
+            <th>Category</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (payment of payments(); track payment.id) {
+            <tr class="table-row">
+              <td class="cell-id">{{ payment.id }}</td>
+              <td><a class="cert-link">{{ payment.certNo }}</a></td>
+              <td class="cell-customer">{{ payment.customer }}</td>
+              <td class="cell-muted">{{ payment.dealer }}</td>
+              <td>
+                <span class="category-chip">{{ payment.category }}</span>
+              </td>
+              <td>
+                <div class="cell-method">
+                  <tui-icon [icon]="methodIcon(payment.method)" class="method-icon" />
+                  <span>{{ payment.method }}</span>
+                </div>
+              </td>
+              <td class="cell-date">{{ payment.date }}</td>
+              <td class="cell-amount">{{ payment.amount | number:'1.2-2' }}</td>
+              <td>
+                <span class="status-badge" [attr.data-status]="payment.status">
+                  {{ statusLabel(payment.status) }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

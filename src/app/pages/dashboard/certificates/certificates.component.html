@@ -1,0 +1,223 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Certificates</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <tui-tabs [(activeItemIndex)]="activeTab">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <tui-icon icon="@tui.search" class="search-icon" />
+      <input class="search-input" placeholder="Certificate no." />
+    </div>
+    <div class="toolbar-actions">
+      <button tuiButton appearance="outline" size="s">
+        <tui-icon icon="@tui.sliders-horizontal" />
+        Filters
+      </button>
+      <button tuiButton appearance="ghost" size="s">Clear Filters</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="th-expand"></th>
+            <th>Certificate No.</th>
+            <th>Created</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Dealer</th>
+            <th>Branch</th>
+            <th>Salesman</th>
+            <th>Category</th>
+            <th>Pricing name</th>
+            <th>Pricing</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cert of certificates(); track cert.certNo) {
+            <tr class="table-row" [class.table-row--expanded]="expandedCert() === cert.certNo">
+              <td class="td-expand">
+                <button class="expand-btn" (click)="toggleExpand(cert.certNo)">
+                  <tui-icon [icon]="expandedCert() === cert.certNo ? '@tui.minus' : '@tui.plus'" />
+                </button>
+              </td>
+              <td><a class="cert-link">{{ cert.certNo }}</a></td>
+              <td class="cell-date">{{ cert.created }}</td>
+              <td class="cell-customer">{{ cert.customer }}</td>
+              <td class="cell-phone">{{ cert.phone }}</td>
+              <td class="cell-truncate" [title]="cert.dealer">{{ cert.dealer }}</td>
+              <td class="cell-truncate" [title]="cert.branch">{{ cert.branch }}</td>
+              <td class="cell-truncate" [title]="cert.salesman">{{ cert.salesman }}</td>
+              <td>
+                <span class="category-chip">{{ cert.category }}</span>
+              </td>
+              <td class="cell-truncate" [title]="cert.pricingName">{{ cert.pricingName }}</td>
+              <td class="cell-pricing">{{ cert.pricing | number:'1.2-2' }}</td>
+              <td>
+                <span class="status-dot" [attr.data-status]="cert.status" [title]="statusLabel(cert.status)"></span>
+              </td>
+              <td>
+                <button class="action-btn" title="More actions">···</button>
+              </td>
+            </tr>
+            @if (expandedCert() === cert.certNo) {
+              <tr class="expand-detail-row">
+                <td colspan="13">
+                  <div class="detail-grid">
+
+                    <!-- General details -->
+                    <div class="detail-card">
+                      <div class="detail-card-header">
+                        <span class="detail-card-title">General details</span>
+                      </div>
+                      <div class="detail-fields">
+                        <div class="detail-field">
+                          <span class="df-label">Insurance service type:</span>
+                          <span class="df-value">{{ cert.insuranceServiceType }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Insurance term:</span>
+                          <span class="df-value">{{ cert.insuranceTerm }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Protection valid from:</span>
+                          <span class="df-value">{{ cert.validFrom }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Protection valid to:</span>
+                          <span class="df-value">{{ cert.validTo }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Payment type:</span>
+                          <span class="df-value">{{ cert.paymentType }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Monthly payment:</span>
+                          <span class="df-value">
+                            @if (cert.monthlyPayment > 0) {
+                              {{ cert.monthlyPayment | number:'1.2-2' }} €
+                            } @else {
+                              —
+                            }
+                          </span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Certificate price:</span>
+                          <span class="df-value">{{ cert.certPrice | number:'1.2-2' }} €</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Insurance plan:</span>
+                          <span class="df-value">{{ cert.insurancePlan || '—' }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Barcode:</span>
+                          <span class="df-value df-mono">{{ cert.barcode }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Product code:</span>
+                          <span class="df-value df-mono">{{ cert.productCode }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Registry code:</span>
+                          <span class="df-value df-mono">{{ cert.registryCode }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Insured device -->
+                    <div class="detail-card">
+                      <div class="detail-card-header">
+                        <span class="detail-card-title">Insured device</span>
+                      </div>
+                      <div class="detail-fields">
+                        <div class="detail-field">
+                          <span class="df-label">Manufacturer:</span>
+                          <span class="df-value">{{ cert.manufacturer }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Model:</span>
+                          <span class="df-value">{{ cert.model }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">IMEI/Serial:</span>
+                          <span class="df-value df-mono">{{ cert.imeiSerial }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Manufacturer warranty:</span>
+                          <span class="df-value">{{ cert.manufacturerWarranty }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Price:</span>
+                          <span class="df-value">{{ cert.devicePrice | number:'1.2-2' }} €</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Category:</span>
+                          <span class="df-value">{{ cert.category }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Customer -->
+                    <div class="detail-card">
+                      <div class="detail-card-header">
+                        <span class="detail-card-title">Customer</span>
+                        <button class="detail-edit-btn">
+                          <tui-icon icon="@tui.pencil" />
+                          Edit
+                        </button>
+                      </div>
+                      <div class="detail-fields">
+                        <div class="detail-field">
+                          <span class="df-label">Name:</span>
+                          <span class="df-value">{{ cert.customer }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Phone:</span>
+                          <span class="df-value">{{ cert.phone }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Email:</span>
+                          <span class="df-value">{{ cert.email }}</span>
+                        </div>
+                        <div class="detail-field">
+                          <span class="df-label">Address:</span>
+                          <span class="df-value">{{ cert.address }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn page-arrow" disabled>‹</button>
+      @for (p of [1,2,3,4,5]; track p) {
+        <button class="page-btn" [class.page-btn--active]="p === 1">{{ p }}</button>
+      }
+      <button class="page-btn page-arrow">›</button>
+    </div>
+  </div>
+</div>

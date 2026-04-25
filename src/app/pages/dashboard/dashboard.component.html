@@ -1,0 +1,60 @@
+<div class="shell" [class.shell--collapsed]="collapsed()">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <tui-icon icon="@tui.shield-check" />
+      </div>
+      @if (!collapsed()) {
+        <span class="logo-text">InsureCert</span>
+      }
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.route) {
+        <a
+          class="nav-item"
+          [class.nav-item--icon-only]="collapsed()"
+          [routerLink]="item.route"
+          routerLinkActive="nav-item--active"
+          [title]="collapsed() ? item.label : ''"
+        >
+          <tui-icon [icon]="item.icon" class="nav-icon" />
+          @if (!collapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-toggle-wrap" [class.sidebar-toggle-wrap--collapsed]="collapsed()">
+      <button class="sidebar-toggle-btn" (click)="toggleSidebar()"
+              [title]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
+        <tui-icon [icon]="collapsed() ? '@tui.chevrons-right' : '@tui.chevrons-left'" class="nav-icon" />
+        @if (!collapsed()) {
+          <span class="sidebar-toggle-label">Collapse</span>
+        }
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="content-area">
+    <header class="topbar">
+      <div class="topbar-right">
+        <div class="market-selector">
+          <tui-icon icon="@tui.globe" class="market-icon" />
+          <span>Lithuania</span>
+        </div>
+        <div class="user-chip">
+          <div class="user-avatar-sm">{{ user().initials }}</div>
+          <span>{{ user().name }}</span>
+          <tui-icon icon="@tui.chevron-down" class="chip-caret" />
+        </div>
+      </div>
+    </header>
+    <main class="main-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
