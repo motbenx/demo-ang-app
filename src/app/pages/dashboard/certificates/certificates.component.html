@@ -57,7 +57,7 @@
                   <tui-icon [icon]="expandedCert() === cert.certNo ? '@tui.minus' : '@tui.plus'" />
                 </button>
               </td>
-              <td><a class="cert-link">{{ cert.certNo }}</a></td>
+              <td><a class="cert-link" [routerLink]="['/dashboard/certificates', cert.certNo]">{{ cert.certNo }}</a></td>
               <td class="cell-date">{{ cert.created }}</td>
               <td class="cell-customer">{{ cert.customer }}</td>
               <td class="cell-phone">{{ cert.phone }}</td>
