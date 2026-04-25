@@ -1,0 +1,202 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button tuiButton appearance="ghost" size="s" class="back-btn">
+        <tui-icon icon="@tui.arrow-left" />
+        Back
+      </button>
+      <div class="title-group">
+        <h1 class="page-title">Certificate {{ certificate().certNo }}</h1>
+        <span class="status-badge" [attr.data-status]="certificate().status">
+          {{ statusLabel(certificate().status) }}
+        </span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button tuiButton appearance="outline" size="s">
+        <tui-icon icon="@tui.printer" />
+        Print
+      </button>
+      <button tuiButton appearance="outline" size="s">
+        <tui-icon icon="@tui.download" />
+        Download PDF
+      </button>
+      <button tuiButton appearance="primary" size="s">
+        <tui-icon icon="@tui.edit-2" />
+        Edit
+      </button>
+    </div>
+  </div>
+
+  <!-- Details Grid -->
+  <div class="details-grid">
+    <!-- General Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <tui-icon icon="@tui.file-text" class="card-icon" />
+        <span class="detail-card-title">General Information</span>
+      </div>
+      <div class="detail-fields">
+        <div class="detail-field">
+          <span class="df-label">Certificate No.:</span>
+          <span class="df-value df-mono">{{ certificate().certNo }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Created:</span>
+          <span class="df-value">{{ certificate().created }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Insurance service type:</span>
+          <span class="df-value">{{ certificate().insuranceServiceType }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Insurance term:</span>
+          <span class="df-value">{{ certificate().insuranceTerm }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Protection valid from:</span>
+          <span class="df-value">{{ certificate().validFrom }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Protection valid to:</span>
+          <span class="df-value">{{ certificate().validTo }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Payment type:</span>
+          <span class="df-value">{{ certificate().paymentType }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Monthly payment:</span>
+          <span class="df-value">
+            @if (certificate().monthlyPayment > 0) {
+              {{ certificate().monthlyPayment | number:'1.2-2' }} €
+            } @else {
+              —
+            }
+          </span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Certificate price:</span>
+          <span class="df-value">{{ certificate().certPrice | number:'1.2-2' }} €</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Insurance plan:</span>
+          <span class="df-value">{{ certificate().insurancePlan || '—' }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Barcode:</span>
+          <span class="df-value df-mono">{{ certificate().barcode }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Product code:</span>
+          <span class="df-value df-mono">{{ certificate().productCode }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Registry code:</span>
+          <span class="df-value df-mono">{{ certificate().registryCode }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <tui-icon icon="@tui.user" class="card-icon" />
+        <span class="detail-card-title">Customer Information</span>
+      </div>
+      <div class="detail-fields">
+        <div class="detail-field">
+          <span class="df-label">Name:</span>
+          <span class="df-value">{{ certificate().customer }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Phone:</span>
+          <span class="df-value">{{ certificate().phone }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Email:</span>
+          <span class="df-value">{{ certificate().email }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Address:</span>
+          <span class="df-value">{{ certificate().address }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insured Device -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <tui-icon icon="@tui.smartphone" class="card-icon" />
+        <span class="detail-card-title">Insured Device</span>
+      </div>
+      <div class="detail-fields">
+        <div class="detail-field">
+          <span class="df-label">Manufacturer:</span>
+          <span class="df-value">{{ certificate().manufacturer }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Model:</span>
+          <span class="df-value">{{ certificate().model }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">IMEI / Serial:</span>
+          <span class="df-value df-mono">{{ certificate().imeiSerial }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Manufacturer warranty:</span>
+          <span class="df-value">{{ certificate().manufacturerWarranty }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Device price:</span>
+          <span class="df-value">{{ certificate().devicePrice | number:'1.2-2' }} €</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Category:</span>
+          <span class="df-value">{{ certificate().category }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dealer & Sales Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <tui-icon icon="@tui.store" class="card-icon" />
+        <span class="detail-card-title">Dealer & Sales Information</span>
+      </div>
+      <div class="detail-fields">
+        <div class="detail-field">
+          <span class="df-label">Dealer:</span>
+          <span class="df-value">{{ certificate().dealer }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Branch:</span>
+          <span class="df-value">{{ certificate().branch }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Salesman:</span>
+          <span class="df-value">{{ certificate().salesman }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <tui-icon icon="@tui.credit-card" class="card-icon" />
+        <span class="detail-card-title">Pricing Information</span>
+      </div>
+      <div class="detail-fields">
+        <div class="detail-field">
+          <span class="df-label">Pricing name:</span>
+          <span class="df-value">{{ certificate().pricingName }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="df-label">Pricing:</span>
+          <span class="df-value">{{ certificate().pricing | number:'1.2-2' }} €</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
