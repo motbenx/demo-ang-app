@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 
 export type PaymentStatus = 'completed' | 'pending' | 'failed' | 'refunded';
@@ -19,7 +20,7 @@ export interface Payment {
 @Component({
   selector: 'app-payments',
   standalone: true,
-  imports: [DecimalPipe, TuiButton, TuiIcon],
+  imports: [DecimalPipe, RouterLink, TuiButton, TuiIcon],
   templateUrl: './payments.component.html',
   styleUrls: ['./payments.component.css'],
 })
