@@ -4,7 +4,7 @@
   padding: 24px 28px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
 }
 
 .page-header {
@@ -13,6 +13,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+  margin-bottom: 16px;
 }
 
 .page-title {
@@ -28,11 +29,24 @@
   color: #6b7280;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Tabs ────────────────────────────────────────── */
+.tabs-bar {
+  border-bottom: 2px solid #e8eaed;
+  margin-bottom: 16px;
+}
+
 /* Stats */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 14px;
+  margin-bottom: 20px;
 }
 
 .stat-card {
@@ -101,11 +115,12 @@
 .data-table td { padding: 11px 14px; color: #374151; vertical-align: middle; }
 
 .cell-id { font-family: 'SF Mono', monospace; font-size: 12px; color: #9ca3af; }
-.cert-link { color: #6366f1; font-weight: 500; text-decoration: none; cursor: pointer; }
-.cert-link:hover { text-decoration: underline; }
+.cert-link, .inv-link { color: #6366f1; font-weight: 500; text-decoration: none; cursor: pointer; white-space: nowrap; }
+.cert-link:hover, .inv-link:hover { text-decoration: underline; }
 .cell-customer { font-weight: 500; color: #111827; white-space: nowrap; }
 .cell-muted { color: #6b7280; white-space: nowrap; }
 .cell-date { white-space: nowrap; font-variant-numeric: tabular-nums; color: #4b5563; }
+.cell-date--overdue { color: #dc2626; font-weight: 600; }
 .cell-amount { font-weight: 700; color: #111827; font-variant-numeric: tabular-nums; text-align: right; }
 
 .category-chip {
@@ -130,7 +145,51 @@
   white-space: nowrap;
 }
 
+/* Payment statuses */
 .status-badge[data-status='completed'] { background: #dcfce7; color: #15803d; }
 .status-badge[data-status='failed']    { background: #fee2e2; color: #dc2626; }
 .status-badge[data-status='pending']   { background: #fef3c7; color: #b45309; }
 .status-badge[data-status='refunded']  { background: #ede9fe; color: #7c3aed; }
+
+/* Invoice statuses */
+.status-badge[data-status='paid']    { background: #dcfce7; color: #15803d; }
+.status-badge[data-status='unpaid']  { background: #fef3c7; color: #b45309; }
+.status-badge[data-status='overdue'] { background: #fee2e2; color: #dc2626; }
+.status-badge[data-status='draft']   { background: #f3f4f6; color: #6b7280; }
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 2px;
+}
+.action-btn:hover { background: #f3f4f6; color: #374151; }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.page-btn {
+  min-width: 30px;
+  height: 30px;
+  border: 1px solid #e8eaed;
+  background: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.1s;
+}
+.page-btn:hover:not(:disabled) { background: #f5f3ff; border-color: #6366f1; color: #6366f1; }
+.page-btn--active { background: #6366f1; color: #fff; border-color: #6366f1; }
+.page-btn:disabled { opacity: 0.4; cursor: default; }
+.page-arrow { font-size: 15px; }
