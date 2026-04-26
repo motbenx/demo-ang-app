@@ -14,3 +14,25 @@ This is an Angular project. Follow these rules strictly:
 - Use Angular's dependency injection (constructor injection) — never instantiate services with `new`
 - Reactive forms preferred over template-driven forms for complex forms
 - Use async pipe in templates instead of subscribing in component lifecycle hooks where possible
+
+## UI/UX conventions
+
+### Button and icon sizing
+- Always ensure buttons and icons are properly sized for their context to avoid UI bloating
+- When placing buttons in card headers or compact spaces, use smaller sizes (e.g., padding: 4px 8px, font-size: 11px)
+- Icons inside buttons should match button size — use explicit CSS to constrain icon dimensions (width, height, font-size)
+- For expand/collapse icons in tables, keep them compact (10-12px) to maintain row density
+- Standard sizing pattern for compact buttons:
+  ```css
+  .compact-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    line-height: 1;
+  }
+  .compact-btn tui-icon {
+    font-size: 11px;
+    width: 11px;
+    height: 11px;
+  }
+  ```
+- For icon-only buttons in tables (e.g., expand/collapse), typical size: 18x18px container with 10-12px icon
