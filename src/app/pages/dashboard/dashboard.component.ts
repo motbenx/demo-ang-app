@@ -16,8 +16,7 @@ export class DashboardComponent {
   protected readonly navItems = [
     { label: 'Overview',     icon: '@tui.layout-dashboard', route: '/dashboard/overview' },
     { label: 'Certificates', icon: '@tui.file-badge',       route: '/dashboard/certificates' },
-    { label: 'Invoices',     icon: '@tui.receipt',          route: '/dashboard/invoices' },
-    { label: 'Payments',     icon: '@tui.credit-card',      route: '/dashboard/payments' },
+    { label: 'Payments & Invoices', icon: '@tui.credit-card', route: '/dashboard/payments' },
     { label: 'Dealers',      icon: '@tui.store',            route: '/dashboard/dealers' },
     { label: 'Reports',      icon: '@tui.bar-chart-2',      route: '/dashboard/reports' },
     { label: 'Settings',     icon: '@tui.settings',         route: '/dashboard/settings' },
