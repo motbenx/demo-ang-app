@@ -1,13 +1,30 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Payments</h1>
-      <p class="page-subtitle">Track all incoming and outgoing payment transactions</p>
+      <h1 class="page-title">Payments & Invoices</h1>
+      <p class="page-subtitle">Track all payment transactions and invoice records</p>
     </div>
-    <button tuiButton appearance="primary" size="s">
-      <tui-icon icon="@tui.download" />
-      Export
-    </button>
+    <div class="header-actions">
+      <button tuiButton appearance="outline" size="s">
+        <tui-icon icon="@tui.download" />
+        Export
+      </button>
+      @if (activeTab() === 1) {
+        <button tuiButton appearance="primary" size="s">
+          <tui-icon icon="@tui.plus" />
+          New Invoice
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <tui-tabs [(activeItemIndex)]="activeTab">
+      @for (tab of tabs; track tab) {
+        <button tuiTab>{{ tab }}</button>
+      }
+    </tui-tabs>
   </div>
 
   <!-- Stats -->
@@ -25,54 +42,116 @@
     }
   </div>
 
-  <!-- Table -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Transaction History</span>
-      <span class="record-count">{{ payments().length }} transactions</span>
-    </div>
-    <div class="table-wrapper">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Payment ID</th>
-            <th>Certificate</th>
-            <th>Customer</th>
-            <th>Dealer</th>
-            <th>Category</th>
-            <th>Method</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (payment of payments(); track payment.id) {
-            <tr class="table-row">
-              <td class="cell-id">{{ payment.id }}</td>
-              <td><a class="cert-link" [routerLink]="['/dashboard/certificates', payment.certNo]">{{ payment.certNo }}</a></td>
-              <td class="cell-customer">{{ payment.customer }}</td>
-              <td class="cell-muted">{{ payment.dealer }}</td>
-              <td>
-                <span class="category-chip">{{ payment.category }}</span>
-              </td>
-              <td>
-                <div class="cell-method">
-                  <tui-icon [icon]="methodIcon(payment.method)" class="method-icon" />
-                  <span>{{ payment.method }}</span>
-                </div>
-              </td>
-              <td class="cell-date">{{ payment.date }}</td>
-              <td class="cell-amount">{{ payment.amount | number:'1.2-2' }}</td>
-              <td>
-                <span class="status-badge" [attr.data-status]="payment.status">
-                  {{ statusLabel(payment.status) }}
-                </span>
-              </td>
+  <!-- Payments Table -->
+  @if (activeTab() === 0) {
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Transaction History</span>
+        <span class="record-count">{{ payments().length }} transactions</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Certificate</th>
+              <th>Customer</th>
+              <th>Dealer</th>
+              <th>Category</th>
+              <th>Method</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (payment of payments(); track payment.id) {
+              <tr class="table-row">
+                <td class="cell-id">{{ payment.id }}</td>
+                <td><a class="cert-link" [routerLink]="['/dashboard/certificates', payment.certNo]">{{ payment.certNo }}</a></td>
+                <td class="cell-customer">{{ payment.customer }}</td>
+                <td class="cell-muted">{{ payment.dealer }}</td>
+                <td>
+                  <span class="category-chip">{{ payment.category }}</span>
+                </td>
+                <td>
+                  <div class="cell-method">
+                    <tui-icon [icon]="methodIcon(payment.method)" class="method-icon" />
+                    <span>{{ payment.method }}</span>
+                  </div>
+                </td>
+                <td class="cell-date">{{ payment.date }}</td>
+                <td class="cell-amount">{{ payment.amount | number:'1.2-2' }}</td>
+                <td>
+                  <span class="status-badge" [attr.data-status]="payment.status">
+                    {{ paymentStatusLabel(payment.status) }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button class="page-btn page-arrow" disabled>‹</button>
+        @for (p of [1]; track p) {
+          <button class="page-btn page-btn--active">{{ p }}</button>
+        }
+        <button class="page-btn page-arrow" disabled>›</button>
+      </div>
     </div>
-  </div>
+  }
+
+  <!-- Invoices Table -->
+  @if (activeTab() === 1) {
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">All Invoices</span>
+        <span class="record-count">{{ invoices().length }} records</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Invoice No.</th>
+              <th>Certificate</th>
+              <th>Customer</th>
+              <th>Dealer</th>
+              <th>Category</th>
+              <th>Created</th>
+              <th>Due Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inv of invoices(); track inv.invoiceNo) {
+              <tr class="table-row">
+                <td><a class="inv-link">{{ inv.invoiceNo }}</a></td>
+                <td><a class="cert-link" [routerLink]="['/dashboard/certificates', inv.certNo]">{{ inv.certNo }}</a></td>
+                <td class="cell-customer">{{ inv.customer }}</td>
+                <td class="cell-muted">{{ inv.dealer }}</td>
+                <td><span class="category-chip">{{ inv.category }}</span></td>
+                <td class="cell-date">{{ inv.created }}</td>
+                <td class="cell-date" [class.cell-date--overdue]="inv.status === 'overdue'">{{ inv.dueDate }}</td>
+                <td class="cell-amount">{{ inv.amount | number:'1.2-2' }}</td>
+                <td>
+                  <span class="status-badge" [attr.data-status]="inv.status">{{ invoiceStatusLabel(inv.status) }}</span>
+                </td>
+                <td><button class="action-btn" title="More actions">···</button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button class="page-btn page-arrow" disabled>‹</button>
+        @for (p of [1,2,3]; track p) {
+          <button class="page-btn" [class.page-btn--active]="p === 1">{{ p }}</button>
+        }
+        <button class="page-btn page-arrow">›</button>
+      </div>
+    </div>
+  }
 </div>
