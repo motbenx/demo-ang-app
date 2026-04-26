@@ -55,7 +55,7 @@
           @for (inv of invoices(); track inv.invoiceNo) {
             <tr class="table-row">
               <td><a class="inv-link">{{ inv.invoiceNo }}</a></td>
-              <td><a class="cert-link">{{ inv.certNo }}</a></td>
+              <td><a class="cert-link" [routerLink]="['/dashboard/certificates', inv.certNo]">{{ inv.certNo }}</a></td>
               <td class="cell-customer">{{ inv.customer }}</td>
               <td class="cell-muted">{{ inv.dealer }}</td>
               <td><span class="category-chip">{{ inv.category }}</span></td>
