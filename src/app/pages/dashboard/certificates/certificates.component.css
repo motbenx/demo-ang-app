@@ -156,6 +156,12 @@
   color: #6366f1;
 }
 
+.expand-btn tui-icon {
+  font-size: 10px;
+  width: 10px;
+  height: 10px;
+}
+
 .cert-link {
   color: #6366f1;
   font-weight: 500;
@@ -364,7 +370,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border: 1px solid #d1d5db;
   border-radius: 5px;
   background: #fff;
@@ -373,9 +379,16 @@
   cursor: pointer;
   font-weight: 500;
   transition: border-color 0.14s, color 0.14s;
+  line-height: 1;
 }
 
 .detail-edit-btn:hover {
   border-color: #6366f1;
   color: #6366f1;
+}
+
+.detail-edit-btn tui-icon {
+  font-size: 11px;
+  width: 11px;
+  height: 11px;
 }
