@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 
 export type InvoiceStatus = 'paid' | 'unpaid' | 'overdue' | 'draft';
@@ -19,7 +20,7 @@ export interface Invoice {
 @Component({
   selector: 'app-invoices',
   standalone: true,
-  imports: [DecimalPipe, TuiButton, TuiIcon],
+  imports: [DecimalPipe, RouterLink, TuiButton, TuiIcon],
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.css'],
 })
