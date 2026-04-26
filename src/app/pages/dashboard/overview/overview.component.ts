@@ -1,4 +1,7 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { Certificate } from '../certificates/certificates.component';
 import { CertificatesService } from '../certificates/certificates.service';
 import { Payment } from '../payments/payments.component';
@@ -14,12 +17,19 @@ export interface ActivityItem {
   status: string;
 }
 
+export interface CertStatusBreakdown {
+  status: string;
+  count: number;
+  percentage: number;
+  color: string;
+}
+
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [],
-  template: '',
-  styles: '',
+  imports: [DecimalPipe, RouterLink, TuiButton, TuiIcon],
+  templateUrl: './overview.component.html',
+  styleUrls: ['./overview.component.css'],
 })
 export class OverviewComponent {
   private readonly certificates = signal<Certificate[]>([]);
@@ -42,6 +52,31 @@ export class OverviewComponent {
       .filter(payment => payment.status === 'pending')
       .reduce((sum, payment) => sum + payment.amount, 0)
   );
+
+  protected readonly certStatusBreakdown = computed(() => {
+    const certs = this.certificates();
+    const total = certs.length;
+    
+    const statusCounts: Record<string, number> = {
+      active: 0,
+      expired: 0,
+      pending: 0,
+      suspended: 0,
+    };
+
+    certs.forEach(cert => {
+      statusCounts[cert.status] = (statusCounts[cert.status] || 0) + 1;
+    });
+
+    const breakdown: CertStatusBreakdown[] = [
+      { status: 'Active', count: statusCounts.active, percentage: (statusCounts.active / total) * 100, color: '#22c55e' },
+      { status: 'Pending', count: statusCounts.pending, percentage: (statusCounts.pending / total) * 100, color: '#f59e0b' },
+      { status: 'Expired', count: statusCounts.expired, percentage: (statusCounts.expired / total) * 100, color: '#ef4444' },
+      { status: 'Suspended', count: statusCounts.suspended, percentage: (statusCounts.suspended / total) * 100, color: '#9ca3af' },
+    ];
+
+    return breakdown;
+  });
 
   protected readonly recentActivity = computed(() => {
     const allCerts = [...this.certificates()];
@@ -85,5 +120,27 @@ export class OverviewComponent {
   ) {
     this.certificates.set(this.certificatesService.getCertificates());
     this.payments.set(this.paymentService.getPayments());
+  }
+
+  protected activityIcon(type: 'certificate' | 'payment'): string {
+    return type === 'certificate' ? '@tui.file-badge' : '@tui.credit-card';
+  }
+
+  protected activityTypeLabel(type: 'certificate' | 'payment'): string {
+    return type === 'certificate' ? 'Certificate' : 'Payment';
+  }
+
+  protected statusLabel(type: 'certificate' | 'payment', status: string): string {
+    if (type === 'certificate') {
+      const labels: Record<string, string> = {
+        active: 'Active',
+        expired: 'Expired',
+        pending: 'Pending',
+        suspended: 'Suspended',
+      };
+      return labels[status] || status;
+    } else {
+      return status.charAt(0).toUpperCase() + status.slice(1);
+    }
   }
 }
