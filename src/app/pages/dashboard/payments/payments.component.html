@@ -50,7 +50,7 @@
           @for (payment of payments(); track payment.id) {
             <tr class="table-row">
               <td class="cell-id">{{ payment.id }}</td>
-              <td><a class="cert-link">{{ payment.certNo }}</a></td>
+              <td><a class="cert-link" [routerLink]="['/dashboard/certificates', payment.certNo]">{{ payment.certNo }}</a></td>
               <td class="cell-customer">{{ payment.customer }}</td>
               <td class="cell-muted">{{ payment.dealer }}</td>
               <td>
