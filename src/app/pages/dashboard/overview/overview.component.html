@@ -1,0 +1,150 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Overview</h1>
+      <p class="page-subtitle">Key metrics and recent activity</p>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-label">Total Certificates</span>
+        <tui-icon icon="@tui.file-badge" class="kpi-icon" />
+      </div>
+      <div class="kpi-value">{{ totalCertificates() }}</div>
+      <div class="kpi-trend kpi-trend--up">
+        <tui-icon icon="@tui.trending-up" class="trend-icon" />
+        <span class="trend-text">12% from last month</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-label">Active Certificates</span>
+        <tui-icon icon="@tui.check-circle" class="kpi-icon" />
+      </div>
+      <div class="kpi-value">{{ activeCertificates() }}</div>
+      <div class="kpi-trend kpi-trend--up">
+        <tui-icon icon="@tui.trending-up" class="trend-icon" />
+        <span class="trend-text">8% from last month</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-label">Total Revenue</span>
+        <tui-icon icon="@tui.dollar-sign" class="kpi-icon" />
+      </div>
+      <div class="kpi-value">{{ totalRevenue() | number:'1.2-2' }} €</div>
+      <div class="kpi-trend kpi-trend--up">
+        <tui-icon icon="@tui.trending-up" class="trend-icon" />
+        <span class="trend-text">15% from last month</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-label">Pending Payments</span>
+        <tui-icon icon="@tui.clock" class="kpi-icon" />
+      </div>
+      <div class="kpi-value">{{ pendingPayments() | number:'1.2-2' }} €</div>
+      <div class="kpi-trend kpi-trend--down">
+        <tui-icon icon="@tui.trending-down" class="trend-icon" />
+        <span class="trend-text">5% from last month</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+    <!-- Certificate Status Breakdown -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Certificate Status Breakdown</span>
+        <span class="record-count">{{ totalCertificates() }} total</span>
+      </div>
+      <div class="card-body">
+        <div class="breakdown-list">
+          @for (item of certStatusBreakdown(); track item.status) {
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <div class="breakdown-label-group">
+                  <span class="breakdown-dot" [style.background]="item.color"></span>
+                  <span class="breakdown-label">{{ item.status }}</span>
+                </div>
+                <div class="breakdown-stats">
+                  <span class="breakdown-count">{{ item.count }}</span>
+                  <span class="breakdown-percentage">{{ item.percentage | number:'1.0-0' }}%</span>
+                </div>
+              </div>
+              <div class="breakdown-bar-wrapper">
+                <div class="breakdown-bar" [style.width.%]="item.percentage" [style.background]="item.color"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Feed -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Recent Activity</span>
+        <span class="record-count">Last 10 items</span>
+      </div>
+      <div class="card-body">
+        <div class="activity-list">
+          @for (item of recentActivity().slice(0, 10); track item.id) {
+            <div class="activity-item">
+              <div class="activity-icon" [attr.data-type]="item.type">
+                <tui-icon [icon]="activityIcon(item.type)" />
+              </div>
+              <div class="activity-content">
+                <div class="activity-main">
+                  <span class="activity-type">{{ activityTypeLabel(item.type) }}</span>
+                  @if (item.type === 'certificate') {
+                    <a class="activity-ref" [routerLink]="['/dashboard/certificates', item.id]">{{ item.id }}</a>
+                  } @else {
+                    <span class="activity-ref-plain">{{ item.id }}</span>
+                  }
+                </div>
+                <div class="activity-details">
+                  <span class="activity-customer">{{ item.customer }}</span>
+                  <span class="activity-separator">•</span>
+                  <span class="activity-category">{{ item.category }}</span>
+                  <span class="activity-separator">•</span>
+                  <span class="activity-amount">{{ item.amount | number:'1.2-2' }} €</span>
+                </div>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-date">{{ item.date }}</span>
+                <span class="status-badge status-badge--sm" [attr.data-status]="item.status" [attr.data-type]="item.type">
+                  {{ statusLabel(item.type, item.status) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions Bar -->
+  <div class="quick-actions">
+    <button tuiButton appearance="primary" size="m">
+      <tui-icon icon="@tui.plus" />
+      New Certificate
+    </button>
+    <button tuiButton appearance="outline" size="m">
+      <tui-icon icon="@tui.file-text" />
+      Generate Report
+    </button>
+    <button tuiButton appearance="outline" size="m">
+      <tui-icon icon="@tui.download" />
+      Export Data
+    </button>
+  </div>
+</div>
