@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-export type DealerStatus = 'active' | 'inactive' | 'pending';
+export type DealerStatus = 'active' | 'inactive' | 'suspended';
 
 export interface Dealer {
   id: string;
@@ -91,7 +91,7 @@ export class DealersService {
       region: 'Lithuania',
       activeContracts: 89,
       totalRevenue: 12340.00,
-      status: 'pending',
+      status: 'suspended',
       email: 'contact@baltictech.lt',
       phone: '+370 5 234 5678',
       joinedDate: '2025-04-01',
