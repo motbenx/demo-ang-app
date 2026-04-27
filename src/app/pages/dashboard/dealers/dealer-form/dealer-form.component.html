@@ -1,0 +1,93 @@
+<div class="modal">
+  <div class="modal-header">
+    <h2 class="modal-title">{{ title }}</h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+      <div class="form-field">
+        <label tuiLabel for="name">
+          Name
+          <span class="required-mark">*</span>
+        </label>
+        <input
+          tuiTextfield
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Enter dealer name"
+        />
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+          <tui-error [error]="getNameError()" />
+        }
+      </div>
+
+      <div class="form-field">
+        <label tuiLabel for="region">
+          Region
+          <span class="required-mark">*</span>
+        </label>
+        <input
+          tuiTextfield
+          id="region"
+          type="text"
+          formControlName="region"
+          placeholder="Enter region (e.g., Lithuania)"
+        />
+        @if (form.controls.region.touched && form.controls.region.invalid) {
+          <tui-error [error]="getRegionError()" />
+        }
+      </div>
+
+      <div class="form-field">
+        <label tuiLabel for="email">
+          Email
+          <span class="required-mark">*</span>
+        </label>
+        <input
+          tuiTextfield
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="dealer@example.com"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <tui-error [error]="getEmailError()" />
+        }
+      </div>
+
+      <div class="form-field">
+        <label tuiLabel for="phone">Phone</label>
+        <input
+          tuiTextfield
+          id="phone"
+          type="tel"
+          formControlName="phone"
+          placeholder="+370 5 123 4567"
+        />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        tuiButton
+        type="button"
+        appearance="ghost"
+        size="m"
+        (click)="onCancel()"
+        [disabled]="submitting()"
+      >
+        Cancel
+      </button>
+      <button
+        tuiButton
+        type="submit"
+        appearance="primary"
+        size="m"
+        [disabled]="submitting()"
+      >
+        {{ mode === 'add' ? 'Add Dealer' : 'Save Changes' }}
+      </button>
+    </div>
+  </form>
+</div>
