@@ -103,7 +103,7 @@ export class DealerFormComponent {
         phone: formValue.phone || '',
         activeContracts: 0,
         totalRevenue: 0,
-        status: 'pending',
+        status: 'active',
         joinedDate: new Date().toISOString().split('T')[0],
       };
       this.dealersService.add(newDealer);
