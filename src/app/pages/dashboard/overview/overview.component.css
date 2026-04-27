@@ -125,13 +125,20 @@
   line-height: 1.2;
 }
 
-/* ── Chart Section ───────────────────────────────── */
-.chart-section {
+/* ── Content Grid ────────────────────────────────── */
+.content-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
+@media (max-width: 1200px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Chart Card ──────────────────────────────────── */
 .chart-card {
   background: #fff;
   border: 1px solid #e8eaed;
@@ -272,4 +279,188 @@
   color: #6b7280;
   min-width: 48px;
   text-align: right;
+}
+
+/* ── Activity Card ───────────────────────────────── */
+.activity-card {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── Activity Header ─────────────────────────────── */
+.activity-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.activity-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-title-icon {
+  font-size: 20px;
+  color: #6366f1;
+}
+
+.activity-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.activity-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin-left: 30px;
+}
+
+/* ── Activity Body ───────────────────────────────── */
+.activity-body {
+  padding: 16px 24px;
+}
+
+/* ── Activity List ───────────────────────────────── */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Activity Item ───────────────────────────────── */
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 10px;
+  border-radius: 8px;
+  transition: background 0.14s;
+}
+
+.activity-item:hover {
+  background: #fafbff;
+}
+
+/* ── Activity Icon ───────────────────────────────── */
+.activity-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activity-icon-wrap[data-type='certificate'] {
+  background: #eff0fe;
+}
+
+.activity-icon-wrap[data-type='payment'] {
+  background: #f0fdf4;
+}
+
+.activity-icon {
+  font-size: 18px;
+}
+
+.activity-icon-wrap[data-type='certificate'] .activity-icon {
+  color: #6366f1;
+}
+
+.activity-icon-wrap[data-type='payment'] .activity-icon {
+  color: #22c55e;
+}
+
+/* ── Activity Content ────────────────────────────── */
+.activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.activity-ref {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111827;
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+}
+
+.activity-status-badge {
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.activity-status-badge[data-status='active'],
+.activity-status-badge[data-status='completed'] {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.activity-status-badge[data-status='expired'],
+.activity-status-badge[data-status='failed'] {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.activity-status-badge[data-status='pending'] {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.activity-status-badge[data-status='suspended'],
+.activity-status-badge[data-status='refunded'] {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.activity-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.activity-customer {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-sep {
+  flex-shrink: 0;
+}
+
+.activity-date {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Activity Amount ─────────────────────────────── */
+.activity-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
