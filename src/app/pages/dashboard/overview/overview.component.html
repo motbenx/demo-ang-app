@@ -25,6 +25,39 @@
     }
   </div>
 
+  <!-- Quick Actions Bar -->
+  <div class="quick-actions-card">
+    <div class="quick-actions-header">
+      <div class="quick-actions-title-group">
+        <tui-icon icon="@tui.zap" class="quick-actions-icon" />
+        <h2 class="quick-actions-title">Quick Actions</h2>
+      </div>
+    </div>
+    <div class="quick-actions-body">
+      <button class="action-btn action-btn--primary" (click)="onNewCertificate()">
+        <tui-icon icon="@tui.plus-circle" class="action-btn-icon" />
+        <div class="action-btn-content">
+          <span class="action-btn-label">New Certificate</span>
+          <span class="action-btn-hint">Create a new insurance certificate</span>
+        </div>
+      </button>
+      <button class="action-btn action-btn--success" (click)="onRecordPayment()">
+        <tui-icon icon="@tui.dollar-sign" class="action-btn-icon" />
+        <div class="action-btn-content">
+          <span class="action-btn-label">Record Payment</span>
+          <span class="action-btn-hint">Log a new payment transaction</span>
+        </div>
+      </button>
+      <button class="action-btn action-btn--purple" (click)="onGenerateReport()">
+        <tui-icon icon="@tui.file-text" class="action-btn-icon" />
+        <div class="action-btn-content">
+          <span class="action-btn-label">Generate Report</span>
+          <span class="action-btn-hint">Export analytics and statistics</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
   <!-- Two-column layout for chart and activity -->
   <div class="content-grid">
     <!-- Certificate Status Breakdown -->
