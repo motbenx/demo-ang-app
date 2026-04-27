@@ -31,7 +31,7 @@ export class DealersComponent {
 
   protected readonly searchQuery = signal('');
   protected readonly statusFilter = signal<string>('all');
-  protected readonly statusOptions = ['all', 'active', 'inactive', 'pending'];
+  protected readonly statusOptions = ['all', 'active', 'inactive', 'suspended'];
 
   private readonly allDealers = signal<Dealer[]>([]);
 
