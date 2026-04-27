@@ -1,0 +1,133 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Overview</h1>
+  </div>
+
+  <!-- KPI Cards Row -->
+  <div class="kpi-grid">
+    @for (card of kpiCards(); track card.label) {
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap" [style.background]="card.color + '15'">
+            <tui-icon [icon]="card.icon" class="kpi-icon" [style.color]="card.color" />
+          </div>
+          <div class="kpi-trend" [class.kpi-trend--positive]="card.trendPositive" [class.kpi-trend--negative]="!card.trendPositive">
+            <tui-icon [icon]="card.trendPositive ? '@tui.trending-up' : '@tui.trending-down'" class="trend-icon" />
+            <span class="trend-value">{{ card.trend }}</span>
+          </div>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-label">{{ card.label }}</div>
+          <div class="kpi-value">{{ card.value }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Quick Actions Bar -->
+  <div class="quick-actions-card">
+    <div class="quick-actions-header">
+      <div class="quick-actions-title-group">
+        <tui-icon icon="@tui.zap" class="quick-actions-icon" />
+        <h2 class="quick-actions-title">Quick Actions</h2>
+      </div>
+    </div>
+    <div class="quick-actions-body">
+      <button class="action-btn action-btn--primary" (click)="onNewCertificate()">
+        <tui-icon icon="@tui.plus-circle" class="action-btn-icon" />
+        <div class="action-btn-content">
+          <span class="action-btn-label">New Certificate</span>
+          <span class="action-btn-hint">Create a new insurance certificate</span>
+        </div>
+      </button>
+      <button class="action-btn action-btn--success" (click)="onRecordPayment()">
+        <tui-icon icon="@tui.dollar-sign" class="action-btn-icon" />
+        <div class="action-btn-content">
+          <span class="action-btn-label">Record Payment</span>
+          <span class="action-btn-hint">Log a new payment transaction</span>
+        </div>
+      </button>
+      <button class="action-btn action-btn--purple" (click)="onGenerateReport()">
+        <tui-icon icon="@tui.file-text" class="action-btn-icon" />
+        <div class="action-btn-content">
+          <span class="action-btn-label">Generate Report</span>
+          <span class="action-btn-hint">Export analytics and statistics</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Two-column layout for chart and activity -->
+  <div class="content-grid">
+    <!-- Certificate Status Breakdown -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title-group">
+          <tui-icon icon="@tui.pie-chart" class="chart-title-icon" />
+          <h2 class="chart-title">Certificate Status Distribution</h2>
+        </div>
+        <div class="chart-subtitle">Breakdown by current status</div>
+      </div>
+      <div class="chart-body">
+        <div class="status-breakdown">
+          @for (item of statusBreakdown(); track item.status) {
+            <div class="status-row">
+              <div class="status-info">
+                <div class="status-dot" [style.background]="item.color"></div>
+                <span class="status-label">{{ item.label }}</span>
+              </div>
+              <div class="status-stats">
+                <div class="status-bar-container">
+                  <div class="status-bar" [style.width.%]="item.percentage" [style.background]="item.color"></div>
+                </div>
+                <div class="status-metrics">
+                  <span class="status-count">{{ item.count }}</span>
+                  <span class="status-percentage">{{ item.percentage | number:'1.1-1' }}%</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Feed -->
+    <div class="activity-card">
+      <div class="activity-header">
+        <div class="activity-title-group">
+          <tui-icon icon="@tui.activity" class="activity-title-icon" />
+          <h2 class="activity-title">Recent Activity</h2>
+        </div>
+        <div class="activity-subtitle">Latest certificates and payments</div>
+      </div>
+      <div class="activity-body">
+        <div class="activity-list">
+          @for (item of recentActivity(); track item.referenceNo) {
+            <div class="activity-item">
+              <div class="activity-icon-wrap" [attr.data-type]="item.type">
+                <tui-icon [icon]="activityIcon(item.type)" class="activity-icon" />
+              </div>
+              <div class="activity-content">
+                <div class="activity-main">
+                  <span class="activity-ref">{{ item.referenceNo }}</span>
+                  <span class="activity-status-badge" [attr.data-status]="item.status">
+                    {{ statusLabel(item.status) }}
+                  </span>
+                </div>
+                <div class="activity-meta">
+                  <span class="activity-customer">{{ item.customer }}</span>
+                  <span class="activity-sep">•</span>
+                  <span class="activity-date">{{ item.date }}</span>
+                </div>
+              </div>
+              @if (item.amount) {
+                <div class="activity-amount">€{{ item.amount | number:'1.2-2' }}</div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
