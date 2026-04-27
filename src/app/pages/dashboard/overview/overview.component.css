@@ -125,6 +125,128 @@
   line-height: 1.2;
 }
 
+/* ── Quick Actions Card ──────────────────────────── */
+.quick-actions-card {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.quick-actions-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.quick-actions-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quick-actions-icon {
+  font-size: 20px;
+  color: #6366f1;
+}
+
+.quick-actions-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.quick-actions-body {
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .quick-actions-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .quick-actions-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Action Button ───────────────────────────────── */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 2px solid;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.action-btn--primary {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+.action-btn--primary:hover {
+  background: #6366f1;
+  color: #fff;
+}
+
+.action-btn--success {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.action-btn--success:hover {
+  background: #22c55e;
+  color: #fff;
+}
+
+.action-btn--purple {
+  border-color: #8b5cf6;
+  color: #8b5cf6;
+}
+
+.action-btn--purple:hover {
+  background: #8b5cf6;
+  color: #fff;
+}
+
+.action-btn-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.action-btn-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.action-btn-label {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.action-btn-hint {
+  font-size: 12px;
+  opacity: 0.8;
+  line-height: 1.3;
+}
+
+.action-btn:hover .action-btn-hint {
+  opacity: 0.9;
+}
+
 /* ── Content Grid ────────────────────────────────── */
 .content-grid {
   display: grid;
