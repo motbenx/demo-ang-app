@@ -39,7 +39,10 @@ This is an Angular project. Follow these rules strictly:
 
 ## 2026-04-27 · by bemotiejus@gmail.com · CER-6: Implement Dealers management page with add/edit/delete functionality
 
+
+
 ## Taiga UI v5 (CRITICAL)
+
 This project uses Taiga UI v5 — NOT v4. Breaking changes:
 - All `*Module` imports removed. Use standalone components instead.
   ❌ TuiSelectModule → ✅ TuiSelect
