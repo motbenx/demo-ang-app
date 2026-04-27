@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 import { TuiIcon } from '@taiga-ui/core';
+import { CertStatus } from '../certificates/certificates.component';
 import { CertificatesService } from '../certificates/certificates.service';
 import { PaymentsService } from '../payments/payments.service';
 
@@ -10,6 +11,14 @@ interface KpiCard {
   trend: string;
   trendPositive: boolean;
   icon: string;
+  color: string;
+}
+
+interface StatusBreakdown {
+  status: CertStatus;
+  label: string;
+  count: number;
+  percentage: number;
   color: string;
 }
 
@@ -60,6 +69,37 @@ export class OverviewComponent {
       color: '#f59e0b',
     },
   ]);
+
+  protected readonly statusBreakdown = computed<StatusBreakdown[]>(() => {
+    const certificates = this.certificatesService.getCertificates();
+    const total = certificates.length;
+
+    const statusCounts: Record<CertStatus, number> = {
+      active: 0,
+      expired: 0,
+      pending: 0,
+      suspended: 0,
+    };
+
+    certificates.forEach(cert => {
+      statusCounts[cert.status]++;
+    });
+
+    const statusConfig: Record<CertStatus, { label: string; color: string }> = {
+      active: { label: 'Active', color: '#22c55e' },
+      expired: { label: 'Expired', color: '#ef4444' },
+      pending: { label: 'Pending', color: '#f59e0b' },
+      suspended: { label: 'Suspended', color: '#9ca3af' },
+    };
+
+    return (Object.keys(statusCounts) as CertStatus[]).map(status => ({
+      status,
+      label: statusConfig[status].label,
+      count: statusCounts[status],
+      percentage: total > 0 ? (statusCounts[status] / total) * 100 : 0,
+      color: statusConfig[status].color,
+    }));
+  });
 
   constructor(
     private certificatesService: CertificatesService,
