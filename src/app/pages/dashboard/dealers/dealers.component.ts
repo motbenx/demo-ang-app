@@ -1,9 +1,11 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TuiButton, TuiDataList, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiDataListWrapper, TuiSelectModule } from '@taiga-ui/kit';
+import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
+import { DealerFormComponent, DealerFormData, DealerFormResult } from './dealer-form/dealer-form.component';
 import { Dealer, DealerStatus, DealersService } from './dealers.service';
 
 @Component({
@@ -24,6 +26,9 @@ import { Dealer, DealerStatus, DealersService } from './dealers.service';
   styleUrls: ['./dealers.component.css'],
 })
 export class DealersComponent {
+  private readonly dialogs = inject(TuiDialogService);
+  private readonly dealersService = inject(DealersService);
+
   protected readonly searchQuery = signal('');
   protected readonly statusFilter = signal<string>('all');
   protected readonly statusOptions = ['all', 'active', 'inactive', 'pending'];
@@ -60,7 +65,7 @@ export class DealersComponent {
     ];
   });
 
-  constructor(private dealersService: DealersService) {
+  constructor() {
     this.allDealers.set(this.dealersService.getAll());
   }
 
@@ -82,7 +87,14 @@ export class DealersComponent {
   }
 
   protected onEdit(dealer: Dealer): void {
-    console.log('Edit dealer:', dealer);
+    const data: DealerFormData = { dealer, mode: 'edit' };
+    this.dialogs
+      .open<DealerFormResult>(new PolymorpheusComponent(DealerFormComponent), { data })
+      .subscribe((result) => {
+        if (result?.success) {
+          this.allDealers.set(this.dealersService.getAll());
+        }
+      });
   }
 
   protected onDelete(dealer: Dealer): void {
@@ -93,6 +105,13 @@ export class DealersComponent {
   }
 
   protected onAddDealer(): void {
-    console.log('Add dealer clicked');
+    const data: DealerFormData = { mode: 'add' };
+    this.dialogs
+      .open<DealerFormResult>(new PolymorpheusComponent(DealerFormComponent), { data })
+      .subscribe((result) => {
+        if (result?.success) {
+          this.allDealers.set(this.dealersService.getAll());
+        }
+      });
   }
 }
