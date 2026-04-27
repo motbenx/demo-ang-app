@@ -269,9 +269,9 @@
   color: #dc2626;
 }
 
-.status-badge[data-status='pending'] {
-  background: #fef3c7;
-  color: #b45309;
+.status-badge[data-status='suspended'] {
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 /* ── Action buttons ──────────────────────────────── */
