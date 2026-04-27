@@ -1,0 +1,129 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dealers</h1>
+      <p class="page-subtitle">Manage dealer network and partnerships</p>
+    </div>
+    <div class="header-actions">
+      <button tuiButton appearance="primary" size="s" (click)="onAddDealer()">
+        <tui-icon icon="@tui.plus" />
+        Add Dealer
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    @for (stat of stats(); track stat.label) {
+      <div class="stat-card">
+        <div class="stat-icon" [style.background]="stat.color + '18'" [style.color]="stat.color">
+          <tui-icon [icon]="stat.icon" />
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stat.value }}</span>
+          <span class="stat-label">{{ stat.label }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <tui-icon icon="@tui.search" class="search-icon" />
+      <input
+        class="search-input"
+        placeholder="Search by dealer name"
+        [value]="searchQuery()"
+        (input)="onSearchInput($any($event.target).value)"
+      />
+    </div>
+    <div class="toolbar-actions">
+      <tui-select
+        tuiTextfieldSize="s"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="onStatusChange($event)"
+      >
+        <span class="filter-label">
+          <tui-icon icon="@tui.sliders-horizontal" class="filter-icon" />
+          Status: {{ statusFilter() === 'all' ? 'All' : statusLabel(statusFilter()) }}
+        </span>
+        <tui-data-list-wrapper
+          *tuiDataList
+          [items]="statusOptions"
+        ></tui-data-list-wrapper>
+      </tui-select>
+      <button tuiButton appearance="ghost" size="s" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">All Dealers</span>
+      <span class="record-count">{{ filteredDealers().length }} dealers</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Region</th>
+            <th>Active Contracts</th>
+            <th>Total Revenue</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (dealer of filteredDealers(); track dealer.id) {
+            <tr class="table-row">
+              <td class="cell-name">{{ dealer.name }}</td>
+              <td class="cell-region">{{ dealer.region }}</td>
+              <td>
+                <a
+                  class="contracts-link"
+                  [routerLink]="['/dashboard/certificates']"
+                  [queryParams]="{ dealer: dealer.name }"
+                >
+                  {{ dealer.activeContracts }}
+                </a>
+              </td>
+              <td class="cell-revenue">{{ dealer.totalRevenue | number:'1.2-2' }}</td>
+              <td>
+                <span class="status-badge" [attr.data-status]="dealer.status">
+                  {{ statusLabel(dealer.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn" (click)="onEdit(dealer)" title="Edit dealer">
+                    <tui-icon icon="@tui.edit-2" />
+                  </button>
+                  <button class="action-btn action-btn--delete" (click)="onDelete(dealer)" title="Delete dealer">
+                    <tui-icon icon="@tui.trash-2" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                <div class="empty-content">
+                  <tui-icon icon="@tui.inbox" class="empty-icon" />
+                  <p class="empty-text">No dealers found</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button class="page-btn page-arrow" disabled>‹</button>
+      <button class="page-btn page-btn--active">1</button>
+      <button class="page-btn page-arrow" disabled>›</button>
+    </div>
+  </div>
+</div>
