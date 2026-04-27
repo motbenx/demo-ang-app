@@ -172,4 +172,16 @@ export class OverviewComponent {
     const statusStr = status as string;
     return statusStr.charAt(0).toUpperCase() + statusStr.slice(1);
   }
+
+  protected onNewCertificate(): void {
+    console.log('Action: New Certificate');
+  }
+
+  protected onRecordPayment(): void {
+    console.log('Action: Record Payment');
+  }
+
+  protected onGenerateReport(): void {
+    console.log('Action: Generate Report');
+  }
 }
