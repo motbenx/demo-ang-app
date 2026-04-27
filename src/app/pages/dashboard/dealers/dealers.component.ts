@@ -68,13 +68,13 @@ export class DealersComponent {
     this.filteredDealers.set(this.dealers());
   }
 
-  protected statusLabel(status: DealerStatus): string {
-    const labels: Record<DealerStatus, string> = {
+  protected statusLabel(status: string): string {
+    const labels: Record<string, string> = {
       active: 'Active',
       inactive: 'Inactive',
       suspended: 'Suspended',
     };
-    return labels[status];
+    return labels[status] ?? status;
   }
 
   protected openAddForm(): void {
