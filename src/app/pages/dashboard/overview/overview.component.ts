@@ -3,6 +3,7 @@ import { Component, computed, signal } from '@angular/core';
 import { TuiIcon } from '@taiga-ui/core';
 import { CertStatus } from '../certificates/certificates.component';
 import { CertificatesService } from '../certificates/certificates.service';
+import { PaymentStatus } from '../payments/payments.component';
 import { PaymentsService } from '../payments/payments.service';
 
 interface KpiCard {
@@ -20,6 +21,17 @@ interface StatusBreakdown {
   count: number;
   percentage: number;
   color: string;
+}
+
+type ActivityType = 'certificate' | 'payment';
+
+interface ActivityItem {
+  type: ActivityType;
+  referenceNo: string;
+  date: string;
+  customer: string;
+  status: CertStatus | PaymentStatus;
+  amount?: number;
 }
 
 @Component({
@@ -101,6 +113,41 @@ export class OverviewComponent {
     }));
   });
 
+  protected readonly recentActivity = computed<ActivityItem[]>(() => {
+    const certificates = this.certificatesService.getCertificates();
+    const payments = this.paymentsService.getPayments();
+
+    const certActivities: ActivityItem[] = certificates
+      .slice()
+      .sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime())
+      .slice(0, 5)
+      .map(cert => ({
+        type: 'certificate' as ActivityType,
+        referenceNo: cert.certNo,
+        date: cert.created,
+        customer: cert.customer,
+        status: cert.status,
+        amount: cert.certPrice,
+      }));
+
+    const paymentActivities: ActivityItem[] = payments
+      .slice()
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5)
+      .map(payment => ({
+        type: 'payment' as ActivityType,
+        referenceNo: payment.id,
+        date: payment.date,
+        customer: payment.customer,
+        status: payment.status,
+        amount: payment.amount,
+      }));
+
+    return [...certActivities, ...paymentActivities]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 10);
+  });
+
   constructor(
     private certificatesService: CertificatesService,
     private paymentsService: PaymentsService
@@ -115,5 +162,14 @@ export class OverviewComponent {
     
     this.totalRevenue.set(this.paymentsService.getTotalRevenue());
     this.pendingPayments.set(this.paymentsService.getPendingPaymentsCount());
+  }
+
+  protected activityIcon(type: ActivityType): string {
+    return type === 'certificate' ? '@tui.file-badge' : '@tui.credit-card';
+  }
+
+  protected statusLabel(status: CertStatus | PaymentStatus): string {
+    const statusStr = status as string;
+    return statusStr.charAt(0).toUpperCase() + statusStr.slice(1);
   }
 }
