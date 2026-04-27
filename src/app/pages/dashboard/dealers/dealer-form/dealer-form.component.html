@@ -1,0 +1,125 @@
+<form class="form" (ngSubmit)="onSubmit()">
+  <h2 class="form-title">{{ isEditing ? 'Edit Dealer' : 'Add New Dealer' }}</h2>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <label class="field-label">Dealer ID</label>
+      <input
+        class="field-input"
+        type="text"
+        [value]="formData().id"
+        [disabled]="isEditing"
+        readonly
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Name *</label>
+      <input
+        class="field-input"
+        type="text"
+        placeholder="Enter dealer name"
+        [value]="formData().name"
+        (input)="updateField('name', $any($event.target).value)"
+        required
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Contact Person *</label>
+      <input
+        class="field-input"
+        type="text"
+        placeholder="Enter contact name"
+        [value]="formData().contact"
+        (input)="updateField('contact', $any($event.target).value)"
+        required
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Email *</label>
+      <input
+        class="field-input"
+        type="email"
+        placeholder="Enter email address"
+        [value]="formData().email"
+        (input)="updateField('email', $any($event.target).value)"
+        required
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Phone *</label>
+      <input
+        class="field-input"
+        type="tel"
+        placeholder="Enter phone number"
+        [value]="formData().phone"
+        (input)="updateField('phone', $any($event.target).value)"
+        required
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Status *</label>
+      <select
+        class="field-input"
+        [value]="formData().status"
+        (change)="updateField('status', $any($event.target).value)"
+        required
+      >
+        @for (status of statusOptions; track status) {
+          <option [value]="status">
+            {{ status.charAt(0).toUpperCase() + status.slice(1) }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="form-field form-field--full">
+      <label class="field-label">Address *</label>
+      <input
+        class="field-input"
+        type="text"
+        placeholder="Enter full address"
+        [value]="formData().address"
+        (input)="updateField('address', $any($event.target).value)"
+        required
+      />
+    </div>
+
+    @if (isEditing) {
+      <div class="form-field">
+        <label class="field-label">Branches</label>
+        <input
+          class="field-input"
+          type="number"
+          min="0"
+          [value]="formData().branches"
+          (input)="updateField('branches', +$any($event.target).value)"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Certificates</label>
+        <input
+          class="field-input"
+          type="number"
+          min="0"
+          [value]="formData().certificates"
+          (input)="updateField('certificates', +$any($event.target).value)"
+        />
+      </div>
+    }
+  </div>
+
+  <div class="form-actions">
+    <button type="button" tuiButton appearance="outline" size="m" (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="submit" tuiButton appearance="primary" size="m">
+      {{ isEditing ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</form>

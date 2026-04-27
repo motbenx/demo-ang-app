@@ -1,0 +1,155 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Dealers</h1>
+    <button tuiButton appearance="primary" size="m" (click)="openAddForm()">
+      <tui-icon icon="@tui.plus" />
+      Add Dealer
+    </button>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <tui-icon icon="@tui.search" class="search-icon" />
+      <input
+        class="search-input"
+        placeholder="Search dealers..."
+        [(ngModel)]="searchQuery"
+        (input)="applyFilters()"
+      />
+    </div>
+    <div class="toolbar-actions">
+      <div class="filter-group">
+        <label class="filter-label">Status:</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="statusFilter"
+          (change)="applyFilters()"
+        >
+          @for (option of statusOptions; track option) {
+            <option [value]="option">
+              {{ option === 'all' ? 'All' : statusLabel(option) }}
+            </option>
+          }
+        </select>
+      </div>
+      <button tuiButton appearance="ghost" size="s" (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Dealer ID</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Branches</th>
+            <th>Certificates</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (dealer of filteredDealers(); track dealer.id) {
+            <tr class="table-row">
+              <td class="cell-id">{{ dealer.id }}</td>
+              <td class="cell-name">{{ dealer.name }}</td>
+              <td class="cell-contact">{{ dealer.contact }}</td>
+              <td class="cell-email">{{ dealer.email }}</td>
+              <td class="cell-phone">{{ dealer.phone }}</td>
+              <td class="cell-address" [title]="dealer.address">
+                {{ dealer.address }}
+              </td>
+              <td class="cell-number">{{ dealer.branches }}</td>
+              <td class="cell-number">
+                <a
+                  class="cert-link"
+                  [routerLink]="['/dashboard/certificates']"
+                  [queryParams]="{ dealer: dealer.id }"
+                >
+                  {{ dealer.certificates }}
+                </a>
+              </td>
+              <td>
+                <span class="status-badge" [attr.data-status]="dealer.status">
+                  {{ statusLabel(dealer.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button
+                    tuiButton
+                    appearance="ghost"
+                    size="xs"
+                    (click)="openEditForm(dealer)"
+                  >
+                    <tui-icon icon="@tui.edit-2" />
+                  </button>
+                  <button
+                    tuiButton
+                    appearance="ghost"
+                    size="xs"
+                    (click)="confirmDelete(dealer.id)"
+                  >
+                    <tui-icon icon="@tui.trash-2" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="10" class="empty-state">No dealers found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  @if (showDeleteConfirm()) {
+    <div class="modal-overlay" (click)="cancelDelete()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h2 class="modal-title">Delete Dealer</h2>
+        <p class="modal-text">
+          Are you sure you want to delete this dealer? This action cannot be undone.
+        </p>
+        <div class="modal-actions">
+          <button tuiButton appearance="outline" size="m" (click)="cancelDelete()">
+            Cancel
+          </button>
+          <button
+            tuiButton
+            appearance="primary"
+            size="m"
+            (click)="deleteDealer(showDeleteConfirm()!)"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Add/Edit Form Modal -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-content modal-content--large" (click)="$event.stopPropagation()">
+        <app-dealer-form
+          [dealer]="editingDealer()"
+          (save)="saveDealer($event)"
+          (cancel)="closeForm()"
+        />
+      </div>
+    </div>
+  }
+</div>
