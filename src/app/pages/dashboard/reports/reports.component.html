@@ -1,0 +1,117 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Reports</h1>
+      <p class="page-subtitle">Analytics and insights for certificates, payments, and invoices</p>
+    </div>
+  </div>
+
+  <!-- Date Range Filter -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <div class="filter-label">Date Range</div>
+      <div class="date-inputs">
+        <div class="date-input-wrapper">
+          <label class="input-label">From</label>
+          <input
+            tuiTextfield
+            type="date"
+            class="date-input"
+            [(ngModel)]="startDate"
+          />
+        </div>
+        <div class="date-separator">—</div>
+        <div class="date-input-wrapper">
+          <label class="input-label">To</label>
+          <input
+            tuiTextfield
+            type="date"
+            class="date-input"
+            [(ngModel)]="endDate"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button tuiButton appearance="outline" size="s" (click)="onResetFilter()">
+        Reset
+      </button>
+      <button tuiButton appearance="primary" size="s" (click)="onApplyFilter()">
+        <tui-icon icon="@tui.search" />
+        Apply Filter
+      </button>
+    </div>
+  </div>
+
+  <!-- Metrics Grid -->
+  <div class="metrics-grid">
+    @for (metric of metricCards(); track metric.label) {
+      <div class="metric-card">
+        <div class="metric-icon" [style.background]="metric.color + '18'" [style.color]="metric.color">
+          <tui-icon [icon]="metric.icon" />
+        </div>
+        <div class="metric-body">
+          <span class="metric-value">{{ metric.value }}</span>
+          <span class="metric-label">{{ metric.label }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Monthly Breakdown Table -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Month-by-Month Breakdown</span>
+      <div class="card-actions">
+        <span class="record-count">{{ monthlyBreakdown().length }} months</span>
+        <button tuiButton appearance="outline" size="s" (click)="onExportCSV()" [disabled]="monthlyBreakdown().length === 0">
+          <tui-icon icon="@tui.download" />
+          Export CSV
+        </button>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Year</th>
+            <th>Certificates Issued</th>
+            <th>Active Certificates</th>
+            <th>Expired Certificates</th>
+            <th>Total Revenue</th>
+            <th>Paid Invoices</th>
+            <th>Unpaid Invoices</th>
+            <th>Average Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (monthlyBreakdown().length === 0) {
+            <tr>
+              <td colspan="9" class="empty-state">
+                <div class="empty-content">
+                  <tui-icon icon="@tui.calendar" class="empty-icon" />
+                  <span class="empty-text">No data available for the selected date range</span>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (month of monthlyBreakdown(); track month.month + '-' + month.year) {
+            <tr class="table-row">
+              <td class="cell-month">{{ month.month }}</td>
+              <td class="cell-year">{{ month.year }}</td>
+              <td class="cell-number">{{ month.certificatesIssued }}</td>
+              <td class="cell-number">{{ month.activeCertificates }}</td>
+              <td class="cell-number">{{ month.expiredCertificates }}</td>
+              <td class="cell-amount">€{{ month.totalRevenue | number:'1.2-2' }}</td>
+              <td class="cell-number">{{ month.paidInvoices }}</td>
+              <td class="cell-number">{{ month.unpaidInvoices }}</td>
+              <td class="cell-amount">€{{ month.averageCertificateValue | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
