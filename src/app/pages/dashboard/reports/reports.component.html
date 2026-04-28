@@ -73,12 +73,10 @@
         />
       </div>
       <div class="toolbar-actions">
-        <tui-input-date-range
-          tuiTextfieldSize="s"
-          [(ngModel)]="dateRangeValue"
-        >
-          Date Range
-        </tui-input-date-range>
+        <tui-textfield tuiTextfieldSize="s">
+          <label tuiLabel>Date Range</label>
+          <input tuiInputDateRange [(ngModel)]="dateRangeValue" />
+        </tui-textfield>
         <button tuiButton appearance="outline" size="s">
           <tui-icon icon="@tui.sliders-horizontal" />
           Filters

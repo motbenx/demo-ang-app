@@ -1,16 +1,14 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputDateRange, TuiSkeleton } from '@taiga-ui/kit';
-import { TuiDay } from '@taiga-ui/cdk';
+import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 import { ReportsService, Report } from './reports.service';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
   imports: [
-    DecimalPipe,
     FormsModule,
     TuiButton,
     TuiIcon,
@@ -25,11 +23,11 @@ export class ReportsComponent {
   protected readonly isLoading = signal(true);
   protected readonly reports = signal<Report[]>([]);
   protected readonly searchQuery = signal('');
-  protected readonly dateRange = signal<[TuiDay | null, TuiDay | null]>([null, null]);
+  protected readonly dateRange = signal<TuiDayRange | null>(null);
 
   protected readonly filteredReports = computed(() => {
     const search = this.searchQuery().toLowerCase();
-    const [startDate, endDate] = this.dateRange();
+    const range = this.dateRange();
 
     return this.reports().filter(report => {
       const matchesSearch = !search ||
@@ -39,12 +37,12 @@ export class ReportsComponent {
 
       if (!matchesSearch) return false;
 
-      if (startDate || endDate) {
+      if (range) {
         const [year, month, day] = report.generatedDate.split('-').map(Number);
         const reportDay = new TuiDay(year, month - 1, day);
 
-        if (startDate && reportDay.dayBefore(startDate)) return false;
-        if (endDate && reportDay.dayAfter(endDate)) return false;
+        if (reportDay.dayBefore(range.from)) return false;
+        if (reportDay.dayAfter(range.to)) return false;
       }
 
       return true;
@@ -74,7 +72,7 @@ export class ReportsComponent {
     setTimeout(() => {
       this.reports.set(this.reportsService.getReports());
       this.isLoading.set(false);
-    }, 5500);
+    }, 1000);
   }
 
   protected onSearchChange(value: string): void {
@@ -82,14 +80,14 @@ export class ReportsComponent {
     this.currentPage.set(1);
   }
 
-  protected onDateRangeChange(range: [TuiDay | null, TuiDay | null]): void {
+  protected onDateRangeChange(range: TuiDayRange | null): void {
     this.dateRange.set(range);
     this.currentPage.set(1);
   }
 
   protected clearFilters(): void {
     this.searchQuery.set('');
-    this.dateRange.set([null, null]);
+    this.dateRange.set(null);
     this.currentPage.set(1);
   }
 
@@ -115,11 +113,11 @@ export class ReportsComponent {
     console.log('Generate new report');
   }
 
-  protected get dateRangeValue(): [TuiDay | null, TuiDay | null] {
+  protected get dateRangeValue(): TuiDayRange | null {
     return this.dateRange();
   }
 
-  protected set dateRangeValue(value: [TuiDay | null, TuiDay | null]) {
+  protected set dateRangeValue(value: TuiDayRange | null) {
     this.onDateRangeChange(value);
   }
 }
