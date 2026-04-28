@@ -1,0 +1,61 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Reports</h1>
+      <p class="page-subtitle">Analytics and insights for certificates, payments, and invoices</p>
+    </div>
+  </div>
+
+  <!-- Date Range Filter -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <div class="filter-label">Date Range</div>
+      <div class="date-inputs">
+        <div class="date-input-wrapper">
+          <label class="input-label">From</label>
+          <input
+            tuiTextfield
+            type="date"
+            class="date-input"
+            [(ngModel)]="startDate"
+          />
+        </div>
+        <div class="date-separator">—</div>
+        <div class="date-input-wrapper">
+          <label class="input-label">To</label>
+          <input
+            tuiTextfield
+            type="date"
+            class="date-input"
+            [(ngModel)]="endDate"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button tuiButton appearance="outline" size="s" (click)="onResetFilter()">
+        Reset
+      </button>
+      <button tuiButton appearance="primary" size="s" (click)="onApplyFilter()">
+        <tui-icon icon="@tui.search" />
+        Apply Filter
+      </button>
+    </div>
+  </div>
+
+  <!-- Metrics Grid -->
+  <div class="metrics-grid">
+    @for (metric of metricCards(); track metric.label) {
+      <div class="metric-card">
+        <div class="metric-icon" [style.background]="metric.color + '18'" [style.color]="metric.color">
+          <tui-icon [icon]="metric.icon" />
+        </div>
+        <div class="metric-body">
+          <span class="metric-value">{{ metric.value }}</span>
+          <span class="metric-label">{{ metric.label }}</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>
