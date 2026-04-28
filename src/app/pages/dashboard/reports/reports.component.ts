@@ -1,7 +1,7 @@
-import { Component, OnInit, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiInputDateRange, TuiSkeleton } from '@taiga-ui/kit';
 import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 import { Report, ReportsService } from './reports.service';
@@ -9,7 +9,7 @@ import { Report, ReportsService } from './reports.service';
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, TuiButton, TuiIcon, TuiSkeleton, TuiTextfield, TuiInputDateRange],
+  imports: [CommonModule, FormsModule, TuiButton, TuiIcon, TuiSkeleton, TuiInputDateRange],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css'],
 })
@@ -56,17 +56,7 @@ export class ReportsComponent implements OnInit {
     this.filteredReports().filter(r => r.status === 'failed').length
   );
 
-  constructor(private reportsService: ReportsService) {
-    effect(() => {
-      const range = this.dateRange();
-      if (range) {
-        console.log('Date range changed:', {
-          from: range.from?.toString(),
-          to: range.to?.toString()
-        });
-      }
-    });
-  }
+  constructor(private reportsService: ReportsService) {}
 
   ngOnInit(): void {
     setTimeout(() => {
