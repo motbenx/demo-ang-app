@@ -55,3 +55,7 @@ This project uses Taiga UI v5 — NOT v4. Breaking changes:
 ## 2026-04-28 · by bemotiejus@gmail.com · CER-7: The branch builds and delivers ~50% of the spec
 
 After implementing any new page, verify all template bindings compile by re-reading the component HTML and confirming every {{ expression }}, (event), and [binding] has a matching property/method in the TS class.
+
+## 2026-04-28 · by bemotiejus@gmail.com · CER-7: The branch builds and delivers ~50% of the spec
+
+New pages must show a loading state. Use @if (isLoading) { <skeleton> } @else { <content> } with a protected isLoading = signal(true) that resolves after data is ready."
