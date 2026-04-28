@@ -84,11 +84,52 @@
 .date-range-form {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.date-inputs {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
 }
 
 .date-range-input {
   max-width: 400px;
+}
+
+.date-range-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  max-width: 400px;
+}
+
+.display-icon {
+  font-size: 16px;
+  color: #0284c7;
+  flex-shrink: 0;
+}
+
+.date-range-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0c4a6e;
 }
 
 /* ── Card ────────────────────────────────────────── */
@@ -116,31 +157,6 @@
 .record-count {
   font-size: 13px;
   color: #6b7280;
-}
-
-/* ── Loading State ───────────────────────────────── */
-.loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 48px 20px;
-  color: #6b7280;
-  font-size: 14px;
-}
-
-.loading-icon {
-  font-size: 20px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* ── Table ───────────────────────────────────────── */
@@ -263,6 +279,10 @@
   }
 
   .date-range-input {
+    max-width: 100%;
+  }
+
+  .date-range-display {
     max-width: 100%;
   }
 
