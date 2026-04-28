@@ -46,19 +46,34 @@ export class ReportsService {
       category: 'Payments',
       type: 'payments',
     },
+    {
+      id: 'RPT-005',
+      title: 'Quarterly Revenue Summary',
+      generatedDate: '2025-03-28',
+      period: '2025-Q1',
+      category: 'Revenue',
+      type: 'revenue',
+    },
+    {
+      id: 'RPT-006',
+      title: 'Certificate Issuance Report',
+      generatedDate: '2025-03-15',
+      period: '2025-02',
+      category: 'Certificates',
+      type: 'certificates',
+    },
   ]);
 
   getReports(): Report[] {
     return this.reports();
   }
 
-  getReportsByDateRange(startDate: Date | null, endDate: Date | null): Report[] {
-    if (!startDate || !endDate) {
-      return this.reports();
-    }
-
+  getReportsByDateRange(startDate: Date, endDate: Date): Report[] {
     const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
     const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
 
     return this.reports().filter(report => {
       const reportDate = new Date(report.generatedDate);
@@ -68,5 +83,9 @@ export class ReportsService {
 
   addReport(report: Report): void {
     this.reports.update(list => [...list, report]);
+  }
+
+  deleteReport(id: string): void {
+    this.reports.update(list => list.filter(r => r.id !== id));
   }
 }
