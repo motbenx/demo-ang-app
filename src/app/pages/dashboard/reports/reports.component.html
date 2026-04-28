@@ -17,6 +17,27 @@
     </div>
   </div>
 
+  <!-- Date Range Filter -->
+  @if (!isLoading()) {
+    <div class="filter-section">
+      <div class="filter-label">Filter by date range:</div>
+      <div class="filter-controls">
+        <tui-input-date-range
+          [ngModel]="dateRange()"
+          (ngModelChange)="onDateRangeChange($event)"
+          class="date-range-input"
+        >
+          Date Range
+        </tui-input-date-range>
+        @if (dateRange()) {
+          <button tuiButton appearance="ghost" size="s" (click)="clearDateFilter()">
+            Clear Filter
+          </button>
+        }
+      </div>
+    </div>
+  }
+
   <!-- Loading Skeleton -->
   @if (isLoading()) {
     <div class="skeleton-container">
@@ -92,7 +113,7 @@
           <tui-icon icon="@tui.file-text" />
         </div>
         <div class="stat-body">
-          <span class="stat-value">{{ reports().length }}</span>
+          <span class="stat-value">{{ totalReports() }}</span>
           <span class="stat-label">Total Reports</span>
         </div>
       </div>
@@ -101,7 +122,7 @@
           <tui-icon icon="@tui.check-circle" />
         </div>
         <div class="stat-body">
-          <span class="stat-value">{{ reports().filter(r => r.status === 'completed').length }}</span>
+          <span class="stat-value">{{ completedReports() }}</span>
           <span class="stat-label">Completed</span>
         </div>
       </div>
@@ -110,7 +131,7 @@
           <tui-icon icon="@tui.clock" />
         </div>
         <div class="stat-body">
-          <span class="stat-value">{{ reports().filter(r => r.status === 'processing').length }}</span>
+          <span class="stat-value">{{ processingReports() }}</span>
           <span class="stat-label">Processing</span>
         </div>
       </div>
@@ -119,7 +140,7 @@
           <tui-icon icon="@tui.alert-circle" />
         </div>
         <div class="stat-body">
-          <span class="stat-value">{{ reports().filter(r => r.status === 'failed').length }}</span>
+          <span class="stat-value">{{ failedReports() }}</span>
           <span class="stat-label">Failed</span>
         </div>
       </div>
