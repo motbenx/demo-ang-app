@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, signal, TemplateRef, ViewChild } from '@angular/core';
-import { TuiDialogService, TuiIcon } from '@taiga-ui/core';
-import { CertStatus } from '../certificates/certificates.component';
+import { Component, computed, signal } from '@angular/core';
+import { TuiIcon } from '@taiga-ui/core';
+import { Certificate, CertStatus } from '../certificates/certificates.component';
 import { CertificatesService } from '../certificates/certificates.service';
 import { PaymentStatus } from '../payments/payments.component';
 import { PaymentsService } from '../payments/payments.service';
@@ -43,15 +43,11 @@ interface ActivityItem {
   styleUrls: ['./overview.component.css'],
 })
 export class OverviewComponent {
-  private readonly dialogs = inject(TuiDialogService);
-
-  @ViewChild('certificateModal')
-  protected readonly certificateModal?: TemplateRef<any>;
-
   protected readonly totalCertificates = signal<number>(0);
   protected readonly activeCertificates = signal<number>(0);
   protected readonly totalRevenue = signal<number>(0);
   protected readonly pendingPayments = signal<number>(0);
+  protected readonly showNewCertificateModal = signal(false);
 
   protected readonly kpiCards = computed<KpiCard[]>(() => [
     {
@@ -180,27 +176,7 @@ export class OverviewComponent {
   }
 
   protected onNewCertificate(): void {
-    if (!this.certificateModal) {
-      return;
-    }
-
-    const dialog = this.dialogs.open(this.certificateModal, {
-      size: 'l',
-      dismissible: false,
-      closeable: true,
-    });
-
-    dialog.subscribe(() => {
-      this.loadKpiData();
-    });
-  }
-
-  protected onModalClose(): void {
-    this.loadKpiData();
-  }
-
-  protected onModalSubmit(): void {
-    this.loadKpiData();
+    this.showNewCertificateModal.set(true);
   }
 
   protected onRecordPayment(): void {
@@ -209,5 +185,15 @@ export class OverviewComponent {
 
   protected onGenerateReport(): void {
     console.log('Action: Generate Report');
+  }
+
+  protected onCloseNewCertificateModal(): void {
+    this.showNewCertificateModal.set(false);
+  }
+
+  protected onCertificateSubmit(certificate: Certificate): void {
+    this.certificatesService.addCertificate(certificate);
+    this.loadKpiData();
+    this.showNewCertificateModal.set(false);
   }
 }
