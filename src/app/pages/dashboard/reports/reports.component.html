@@ -1,0 +1,51 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Reports</h1>
+    <div class="header-actions">
+      <button tuiButton appearance="outline" size="s">
+        <tui-icon icon="@tui.download" />
+        Export
+      </button>
+      <button tuiButton appearance="primary" size="s">
+        <tui-icon icon="@tui.bar-chart-2" />
+        Generate Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Date Range Picker Section -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title-group">
+        <tui-icon icon="@tui.calendar" class="card-icon" />
+        <span class="card-title">Report Period</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="date-range-section">
+        <label class="field-label">Select Date Range</label>
+        <tui-input-date-range
+          class="date-range-input"
+          [ngModel]="dateRange()"
+          (ngModelChange)="dateRange.set($event)"
+        >
+          Select period
+        </tui-input-date-range>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder for future reports content -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Report Results</span>
+    </div>
+    <div class="card-body">
+      <div class="empty-state">
+        <tui-icon icon="@tui.file-text" class="empty-icon" />
+        <p class="empty-text">Select a date range to generate reports</p>
+      </div>
+    </div>
+  </div>
+</div>
