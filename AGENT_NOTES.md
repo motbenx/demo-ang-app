@@ -56,9 +56,25 @@ This project uses Taiga UI v5 — NOT v4. Breaking changes:
 
 After implementing any new page, verify all template bindings compile by re-reading the component HTML and confirming every {{ expression }}, (event), and [binding] has a matching property/method in the TS class.
 
-## 2026-04-28 · by bemotiejus@gmail.com · CER-7: The branch builds and delivers ~50% of the spec
+## 2026-04-28 · by bemotiejus@gmail.com · CER-7: TuiSkeleton usage (CRITICAL)
 
-New pages must show a loading state. Use @if (isLoading) { <skeleton> } @else { <content> } with a protected isLoading = signal(true) that resolves after data is ready."
+TuiSkeleton is a DIRECTIVE, NOT a component tag. Using it as `<tui-skeleton>` breaks the build.
+
+❌ WRONG — breaks ng build:
+  <tui-skeleton [height]="20" />
+  <tui-skeleton class="..." />
+
+✅ CORRECT — use as attribute directive on existing elements:
+  <div [tuiSkeleton]="isLoading" style="height: 20px; border-radius: 4px"></div>
+  <span [tuiSkeleton]="isLoading">placeholder text</span>
+
+Import in component: import { TuiSkeleton } from '@taiga-ui/kit';
+Add to imports array: TuiSkeleton
+
+Loading state pattern:
+  protected isLoading = signal(true);
+  // in constructor or ngOnInit: setTimeout(() => this.isLoading.set(false), 0)
+  // in template: @if (isLoading()) { <div [tuiSkeleton]="true" style="height:40px"></div> } @else { <actual-content /> }
 
 ## 2026-04-28 · by bemotiejus@gmail.com · CER-9: ✘ [ERROR] NG8001: 'tui-skeleton' is not a known element:
 

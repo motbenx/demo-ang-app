@@ -6,6 +6,7 @@ import { CertificatesComponent } from './pages/dashboard/certificates/certificat
 import { CertificateDetailsComponent } from './pages/dashboard/certificates/certificate-details/certificate-details.component';
 import { DealersComponent } from './pages/dashboard/dealers/dealers.component';
 import { PaymentsComponent } from './pages/dashboard/payments/payments.component';
+import { InvoicesComponent } from './pages/dashboard/invoices/invoices.component';
 import { ReportsComponent } from './pages/dashboard/reports/reports.component';
 
 export const routes: Routes = [
@@ -20,6 +21,7 @@ export const routes: Routes = [
       { path: 'certificates/:id', component: CertificateDetailsComponent },
       { path: 'dealers', component: DealersComponent },
       { path: 'payments', component: PaymentsComponent },
+      { path: 'invoices', component: InvoicesComponent },
       { path: 'reports', component: ReportsComponent },
     ],
   },
