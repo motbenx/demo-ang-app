@@ -1,10 +1,11 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
-import { TuiIcon } from '@taiga-ui/core';
+import { Component, computed, inject, signal, TemplateRef, ViewChild } from '@angular/core';
+import { TuiDialogService, TuiIcon } from '@taiga-ui/core';
 import { CertStatus } from '../certificates/certificates.component';
 import { CertificatesService } from '../certificates/certificates.service';
 import { PaymentStatus } from '../payments/payments.component';
 import { PaymentsService } from '../payments/payments.service';
+import { NewCertificateModalComponent } from '../certificates/new-certificate-modal/new-certificate-modal.component';
 
 interface KpiCard {
   label: string;
@@ -37,11 +38,16 @@ interface ActivityItem {
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [DecimalPipe, TuiIcon],
+  imports: [DecimalPipe, TuiIcon, NewCertificateModalComponent],
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.css'],
 })
 export class OverviewComponent {
+  private readonly dialogs = inject(TuiDialogService);
+
+  @ViewChild('certificateModal')
+  protected readonly certificateModal?: TemplateRef<any>;
+
   protected readonly totalCertificates = signal<number>(0);
   protected readonly activeCertificates = signal<number>(0);
   protected readonly totalRevenue = signal<number>(0);
@@ -174,7 +180,27 @@ export class OverviewComponent {
   }
 
   protected onNewCertificate(): void {
-    console.log('Action: New Certificate');
+    if (!this.certificateModal) {
+      return;
+    }
+
+    const dialog = this.dialogs.open(this.certificateModal, {
+      size: 'l',
+      dismissible: false,
+      closeable: true,
+    });
+
+    dialog.subscribe(() => {
+      this.loadKpiData();
+    });
+  }
+
+  protected onModalClose(): void {
+    this.loadKpiData();
+  }
+
+  protected onModalSubmit(): void {
+    this.loadKpiData();
   }
 
   protected onRecordPayment(): void {
