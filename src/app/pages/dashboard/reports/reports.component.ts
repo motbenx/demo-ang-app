@@ -1,65 +1,46 @@
-import { Component, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiInputDateRange } from '@taiga-ui/kit';
-import { TuiDayRange } from '@taiga-ui/cdk';
-import { Subject, takeUntil, debounceTime } from 'rxjs';
+import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
+import { FormsModule } from '@angular/forms';
 import { Report, ReportsService } from './reports.service';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TuiButton, TuiIcon, TuiInputDateRange],
+  imports: [CommonModule, FormsModule, TuiButton, TuiIcon, TuiInputDateRange],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css'],
 })
-export class ReportsComponent implements OnInit, OnDestroy {
+export class ReportsComponent {
   protected readonly reports = signal<Report[]>([]);
-  protected readonly isLoading = signal(false);
-
-  protected readonly dateRangeForm = new FormGroup({
-    dateRange: new FormControl<TuiDayRange | null>(null),
-  });
-
-  private readonly destroy$ = new Subject<void>();
+  protected readonly startDate = signal<TuiDay | null>(null);
+  protected readonly endDate = signal<TuiDay | null>(null);
 
   constructor(private reportsService: ReportsService) {
     this.reports.set(this.reportsService.getReports());
   }
 
-  ngOnInit(): void {
-    this.dateRangeForm.controls.dateRange.valueChanges
-      .pipe(takeUntil(this.destroy$), debounceTime(300))
-      .subscribe(range => {
-        this.onDateRangeChange(range);
-      });
+  protected get dateRange(): TuiDayRange | null {
+    const start = this.startDate();
+    const end = this.endDate();
+    return start && end ? new TuiDayRange(start, end) : null;
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  protected onDateRangeChange(range: TuiDayRange | null): void {
-    if (!range || !range.from || !range.to) {
-      this.reports.set(this.reportsService.getReports());
-      return;
+  protected set dateRange(range: TuiDayRange | null) {
+    if (range) {
+      this.startDate.set(range.from);
+      this.endDate.set(range.to);
+    } else {
+      this.startDate.set(null);
+      this.endDate.set(null);
     }
-
-    this.isLoading.set(true);
-
-    const startDate = range.from.toLocalNativeDate();
-    const endDate = range.to.toLocalNativeDate();
-
-    const filteredReports = this.reportsService.getReportsByDateRange(startDate, endDate);
-    this.reports.set(filteredReports);
-
-    this.isLoading.set(false);
   }
 
   protected clearDateRange(): void {
-    this.dateRangeForm.patchValue({ dateRange: null });
+    this.startDate.set(null);
+    this.endDate.set(null);
   }
 
   protected generateReport(): void {
