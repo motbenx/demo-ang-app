@@ -5,10 +5,16 @@
       <h1 class="page-title">Reports</h1>
       <p class="page-subtitle">Generate and download analytics reports</p>
     </div>
-    <button tuiButton appearance="primary" size="m">
-      <tui-icon icon="@tui.plus" />
-      Generate Report
-    </button>
+    <div class="header-actions">
+      <button tuiButton appearance="outline" size="m" (click)="onExportCSV()">
+        <tui-icon icon="@tui.download" />
+        Export CSV
+      </button>
+      <button tuiButton appearance="primary" size="m">
+        <tui-icon icon="@tui.plus" />
+        Generate Report
+      </button>
+    </div>
   </div>
 
   <!-- KPI Cards -->
@@ -34,7 +40,7 @@
         <tui-input-date-range
           class="date-range-input"
           [(ngModel)]="dateRange"
-          (ngModelChange)="onDateRangeChange($event)"
+          (ngModelChange)="onDateRangeChange()"
         />
       </div>
 
