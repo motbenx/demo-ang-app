@@ -52,10 +52,17 @@ This project uses Taiga UI v5 — NOT v4. Breaking changes:
 - Import path: `@taiga-ui/kit` for most UI components
 - Never import anything ending in `Module` from @taiga-ui/*
 
+### Taiga UI Skeleton Component
+- **TuiSkeleton** is imported from `@taiga-ui/kit` (NOT @taiga-ui/core)
+- Usage: `import { TuiSkeleton } from '@taiga-ui/kit';`
+- Must be added to component's `imports` array
+- Use in template as: `<tui-skeleton class="your-class"></tui-skeleton>`
+- Always style skeleton elements with width/height to match the content they represent
+
 ## 2026-04-28 · by bemotiejus@gmail.com · CER-7: The branch builds and delivers ~50% of the spec
 
 After implementing any new page, verify all template bindings compile by re-reading the component HTML and confirming every {{ expression }}, (event), and [binding] has a matching property/method in the TS class.
 
 ## 2026-04-28 · by bemotiejus@gmail.com · CER-7: The branch builds and delivers ~50% of the spec
 
-New pages must show a loading state. Use @if (isLoading) { <skeleton> } @else { <content> } with a protected isLoading = signal(true) that resolves after data is ready."
+New pages must show a loading state. Use @if (isLoading) { <skeleton> } @else { <content> } with a protected isLoading = signal(true) that resolves after data is ready.
