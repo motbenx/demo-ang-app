@@ -25,6 +25,10 @@
         Filters
       </button>
       <button tuiButton appearance="ghost" size="s">Clear Filters</button>
+      <button tuiButton appearance="primary" size="s" (click)="openNewCertificateModal()">
+        <tui-icon icon="@tui.plus" />
+        New Certificate
+      </button>
     </div>
   </div>
 
@@ -221,3 +225,11 @@
     </div>
   </div>
 </div>
+
+<!-- New Certificate Modal -->
+@if (showNewCertModal()) {
+  <app-new-certificate-modal
+    (close)="closeNewCertificateModal()"
+    (submit)="handleNewCertificate($event)"
+  />
+}
