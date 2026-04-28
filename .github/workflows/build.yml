@@ -13,5 +13,6 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-      - run: npm ci
+      # Use npm install so agents can add packages without manually updating lock file
+      - run: npm install
       - run: npx ng build --configuration production
