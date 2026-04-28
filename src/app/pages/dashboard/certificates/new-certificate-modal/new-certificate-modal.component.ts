@@ -1,48 +1,26 @@
-import { Component, EventEmitter, inject, Output, signal, computed } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Component, EventEmitter, Output, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiStepper, TuiStep } from '@taiga-ui/kit';
-import { Certificate, CertStatus } from '../certificates.component';
-import { CertificatesService } from '../certificates.service';
+import { Certificate } from '../certificates.component';
+import { DealersService } from '../../dealers/dealers.service';
+import { Dealer } from '../../dealers/dealers.component';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
-interface Step1Data {
-  customer: string;
-  phone: string;
-  email: string;
-  address: string;
-  dealer: string;
-  branch: string;
-  salesman: string;
-}
+type Step = 1 | 2 | 3 | 4;
 
-interface Step2Data {
-  manufacturer: string;
-  model: string;
-  imeiSerial: string;
-  manufacturerWarranty: string;
-  devicePrice: number;
-  category: string;
-}
-
-interface Step3Data {
-  insuranceServiceType: string;
-  insuranceTerm: string;
-  validFrom: string;
-  validTo: string;
-  paymentType: string;
-  monthlyPayment: number;
-  certPrice: number;
-  insurancePlan: string;
-  pricingName: string;
-  pricing: number;
-  status: CertStatus;
+interface Branch {
+  id: string;
+  name: string;
+  dealerId: string;
 }
 
 @Component({
   selector: 'app-new-certificate-modal',
   standalone: true,
-  imports: [DecimalPipe, FormsModule, TuiButton, TuiIcon, TuiTextfield, TuiStepper, TuiStep],
+  imports: [DecimalPipe, FormsModule, TuiButton, TuiIcon, TuiStepper, TuiStep],
   templateUrl: './new-certificate-modal.component.html',
   styleUrls: ['./new-certificate-modal.component.css'],
 })
@@ -50,169 +28,234 @@ export class NewCertificateModalComponent {
   @Output() close = new EventEmitter<void>();
   @Output() submit = new EventEmitter<Certificate>();
 
-  protected readonly activeStep = signal(0);
-  protected readonly isDirty = signal(false);
-  protected readonly createdCertificate = signal<Certificate | null>(null);
+  protected readonly currentStep = signal<Step>(1);
+  protected readonly hasChanges = signal(false);
+  protected readonly showConfirmCancel = signal(false);
+  protected readonly generatedCertificate = signal<Certificate | null>(null);
 
-  protected readonly step1Data = signal<Step1Data>({
-    customer: '',
-    phone: '',
-    email: '',
-    address: '',
-    dealer: '',
-    branch: '',
-    salesman: '',
+  // Step 1 — Customer & Sale
+  protected readonly customerName = signal('');
+  protected readonly phone = signal('');
+  protected readonly email = signal('');
+  protected readonly address = signal('');
+  protected readonly selectedDealer = signal('');
+  protected readonly selectedBranch = signal('');
+  protected readonly salesman = signal('');
+  protected readonly createdDate = signal(this.formatDateForInput(new Date()));
+
+  // Step 2 — Insured Device
+  protected readonly category = signal('');
+  protected readonly manufacturer = signal('');
+  protected readonly model = signal('');
+  protected readonly imeiSerial = signal('');
+  protected readonly devicePrice = signal<number | null>(null);
+  protected readonly manufacturerWarranty = signal('');
+
+  // Step 3 — Coverage & Pricing
+  protected readonly insuranceServiceType = signal('');
+  protected readonly insuranceTerm = signal('');
+  protected readonly validFrom = signal(this.formatDateForInput(new Date()));
+  protected readonly pricingName = signal('');
+  protected readonly certPrice = signal<number | null>(null);
+  protected readonly paymentType = signal('');
+  protected readonly monthlyPayment = signal<number | null>(null);
+  protected readonly insurancePlan = signal('');
+
+  // Options
+  protected readonly dealers = signal<Dealer[]>([]);
+  protected readonly branches = signal<Branch[]>([
+    { id: 'BR-001', name: 'Vilnius Main', dealerId: 'DLR-001' },
+    { id: 'BR-002', name: 'Vilnius North', dealerId: 'DLR-001' },
+    { id: 'BR-003', name: 'Kaunas Central', dealerId: 'DLR-002' },
+    { id: 'BR-004', name: 'Riga Nord', dealerId: 'DLR-003' },
+    { id: 'BR-005', name: 'Riga South', dealerId: 'DLR-003' },
+    { id: 'BR-006', name: 'Tallinn Park', dealerId: 'DLR-004' },
+    { id: 'BR-007', name: 'Berlin Central', dealerId: 'DLR-006' },
+    { id: 'BR-008', name: 'Berlin West', dealerId: 'DLR-006' },
+    { id: 'BR-009', name: 'Berlin East', dealerId: 'DLR-006' },
+    { id: 'BR-010', name: 'Prague Main', dealerId: 'DLR-007' },
+  ]);
+
+  protected readonly filteredBranches = computed(() => {
+    const dealerId = this.selectedDealer();
+    if (!dealerId) {
+      return [];
+    }
+    return this.branches().filter(b => b.dealerId === dealerId);
   });
 
-  protected readonly step2Data = signal<Step2Data>({
-    manufacturer: '',
-    model: '',
-    imeiSerial: '',
-    manufacturerWarranty: '12 months',
-    devicePrice: 0,
-    category: '',
-  });
+  protected readonly categoryOptions = ['Smartphones', 'Laptops', 'Tablets', 'E-Scooters', 'Audio', 'Other'];
+  protected readonly warrantyOptions = ['12 months', '24 months', '36 months'];
+  protected readonly serviceTypeOptions = [
+    { value: 'EW', label: 'EW (Extended Warranty)' },
+    { value: 'ADH', label: 'ADH (Accidental Damage & Handling)' },
+  ];
+  protected readonly termOptions = ['12 months', '24 months', '36 months'];
+  protected readonly pricingOptions = ['Basic', 'Standard', 'Standard Plus', 'Premium', 'Premium Pro'];
+  protected readonly paymentTypeOptions = ['Full', 'Partial (3 months)'];
 
-  protected readonly step3Data = signal<Step3Data>({
-    insuranceServiceType: 'EW',
-    insuranceTerm: '24 months',
-    validFrom: '',
-    validTo: '',
-    paymentType: 'Full',
-    monthlyPayment: 0,
-    certPrice: 0,
-    insurancePlan: '',
-    pricingName: '',
-    pricing: 0,
-    status: 'active',
+  protected readonly salesmen = ['Tom K.', 'Sarah L.', 'Mike R.', 'Anna V.', 'Peter D.', 'Jane S.', 'Mark B.'];
+
+  protected readonly validTo = computed(() => {
+    const from = this.validFrom();
+    const term = this.insuranceTerm();
+    if (!from || !term) {
+      return '';
+    }
+    const fromDate = new Date(from);
+    const months = parseInt(term.split(' ')[0]);
+    const toDate = new Date(fromDate);
+    toDate.setMonth(toDate.getMonth() + months);
+    return this.formatDateForDisplay(toDate);
   });
 
   protected readonly step1Valid = computed(() => {
-    const data = this.step1Data();
     return !!(
-      data.customer &&
-      data.phone &&
-      data.email &&
-      data.address &&
-      data.dealer &&
-      data.branch &&
-      data.salesman
+      this.customerName() &&
+      this.phone() &&
+      this.email() &&
+      this.address() &&
+      this.selectedDealer() &&
+      this.selectedBranch() &&
+      this.salesman() &&
+      this.createdDate()
     );
   });
 
   protected readonly step2Valid = computed(() => {
-    const data = this.step2Data();
     return !!(
-      data.manufacturer &&
-      data.model &&
-      data.imeiSerial &&
-      data.manufacturerWarranty &&
-      data.devicePrice > 0 &&
-      data.category
+      this.category() &&
+      this.manufacturer() &&
+      this.model() &&
+      this.imeiSerial() &&
+      this.imeiSerial().length >= 10 &&
+      this.devicePrice() !== null &&
+      this.devicePrice()! > 0 &&
+      this.manufacturerWarranty()
     );
   });
 
   protected readonly step3Valid = computed(() => {
-    const data = this.step3Data();
-    return !!(
-      data.insuranceServiceType &&
-      data.insuranceTerm &&
-      data.validFrom &&
-      data.validTo &&
-      data.paymentType &&
-      data.certPrice > 0 &&
-      data.pricingName &&
-      data.pricing > 0
+    const baseValid = !!(
+      this.insuranceServiceType() &&
+      this.insuranceTerm() &&
+      this.validFrom() &&
+      this.pricingName() &&
+      this.certPrice() !== null &&
+      this.certPrice()! > 0 &&
+      this.paymentType()
     );
+
+    if (this.paymentType() === 'Partial (3 months)') {
+      return baseValid && this.monthlyPayment() !== null && this.monthlyPayment()! > 0;
+    }
+
+    return baseValid;
   });
 
-  protected readonly canProceed = computed(() => {
-    const step = this.activeStep();
-    if (step === 0) return this.step1Valid();
-    if (step === 1) return this.step2Valid();
-    if (step === 2) return this.step3Valid();
-    if (step === 3) return true;
-    return false;
-  });
-
-  protected readonly insuranceServiceTypes = ['EW', 'ADH', 'EW+ADH'];
-  protected readonly insuranceTerms = ['12 months', '24 months', '36 months'];
-  protected readonly paymentTypes = ['Full', 'Partial (3 months)', 'Partial (6 months)'];
-  protected readonly statusOptions: CertStatus[] = ['active', 'pending', 'suspended', 'expired'];
-  protected readonly categories = ['Smartphones', 'Laptops', 'Tablets', 'E-Scooters', 'Audio', 'Wearables'];
-  protected readonly warrantyOptions = ['6 months', '12 months', '24 months', '36 months'];
-
-  constructor(private certificatesService: CertificatesService) {}
-
-  protected updateStep1<K extends keyof Step1Data>(field: K, value: Step1Data[K]): void {
-    this.step1Data.update(data => ({ ...data, [field]: value }));
-    this.isDirty.set(true);
+  constructor(private dealersService: DealersService) {
+    this.dealers.set(this.dealersService.getDealers().filter(d => d.status === 'active'));
   }
 
-  protected updateStep2<K extends keyof Step2Data>(field: K, value: Step2Data[K]): void {
-    this.step2Data.update(data => ({ ...data, [field]: value }));
-    this.isDirty.set(true);
+  protected markChanged(): void {
+    this.hasChanges.set(true);
   }
 
-  protected updateStep3<K extends keyof Step3Data>(field: K, value: Step3Data[K]): void {
-    this.step3Data.update(data => ({ ...data, [field]: value }));
-    this.isDirty.set(true);
-    
-    if (field === 'paymentType' || field === 'certPrice') {
-      this.calculateMonthlyPayment();
+  protected onNext(): void {
+    if (this.currentStep() === 1 && this.step1Valid()) {
+      this.currentStep.set(2);
+    } else if (this.currentStep() === 2 && this.step2Valid()) {
+      this.currentStep.set(3);
     }
   }
 
-  protected nextStep(): void {
-    if (this.canProceed() && this.activeStep() < 3) {
-      if (this.activeStep() === 2) {
-        this.createCertificate();
-      }
-      this.activeStep.update(s => s + 1);
-    }
-  }
-
-  protected prevStep(): void {
-    if (this.activeStep() > 0) {
-      this.activeStep.update(s => s - 1);
+  protected onBack(): void {
+    if (this.currentStep() === 2) {
+      this.currentStep.set(1);
+    } else if (this.currentStep() === 3) {
+      this.currentStep.set(2);
+    } else if (this.currentStep() === 4) {
+      this.currentStep.set(3);
     }
   }
 
   protected onCancel(): void {
-    if (this.isDirty()) {
-      if (confirm('You have unsaved changes. Are you sure you want to cancel?')) {
-        this.close.emit();
-      }
+    if (this.hasChanges()) {
+      this.showConfirmCancel.set(true);
     } else {
       this.close.emit();
     }
   }
 
-  protected onFinish(): void {
-    const cert = this.createdCertificate();
-    if (cert) {
-      this.submit.emit(cert);
-      this.close.emit();
+  protected confirmCancel(): void {
+    this.showConfirmCancel.set(false);
+    this.close.emit();
+  }
+
+  protected cancelCancelation(): void {
+    this.showConfirmCancel.set(false);
+  }
+
+  protected onSubmit(): void {
+    if (!this.step3Valid()) {
+      return;
     }
+
+    const dealer = this.dealers().find(d => d.id === this.selectedDealer());
+    const branch = this.branches().find(b => b.id === this.selectedBranch());
+
+    const certificate: Certificate = {
+      certNo: this.generateTempCertNo(),
+      created: this.createdDate(),
+      customer: this.customerName(),
+      phone: this.phone(),
+      dealer: dealer?.name || '',
+      branch: branch?.name || '',
+      salesman: this.salesman(),
+      category: this.category(),
+      pricingName: this.pricingName(),
+      pricing: this.certPrice()!,
+      status: 'pending',
+      insuranceServiceType: this.insuranceServiceType(),
+      insuranceTerm: this.insuranceTerm(),
+      validFrom: this.validFrom(),
+      validTo: this.validTo(),
+      paymentType: this.paymentType(),
+      monthlyPayment: this.paymentType() === 'Full' ? 0 : (this.monthlyPayment() || 0),
+      certPrice: this.certPrice()!,
+      insurancePlan: this.insurancePlan(),
+      barcode: this.generateTempBarcode(),
+      productCode: this.generateTempProductCode(),
+      registryCode: this.generateTempRegistryCode(),
+      manufacturer: this.manufacturer(),
+      model: this.model(),
+      imeiSerial: this.imeiSerial(),
+      manufacturerWarranty: this.manufacturerWarranty(),
+      devicePrice: this.devicePrice()!,
+      email: this.email(),
+      address: this.address(),
+    };
+
+    this.generatedCertificate.set(certificate);
+    this.currentStep.set(4);
   }
 
   protected async downloadPDF(): Promise<void> {
+    const cert = this.generatedCertificate();
+    if (!cert) {
+      return;
+    }
+
     const element = document.getElementById('cert-preview');
-    const cert = this.createdCertificate();
-    
-    if (!element || !cert) {
+    if (!element) {
       return;
     }
 
     try {
-      const html2canvas = (await import('html2canvas')).default;
-      const jsPDF = (await import('jspdf')).default;
-
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff',
       });
 
       const imgData = canvas.toDataURL('image/png');
@@ -222,91 +265,82 @@ export class NewCertificateModalComponent {
         format: 'a4',
       });
 
-      const imgWidth = 210;
-      const pageHeight = 297;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = 0;
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
       pdf.save(`Certificate-${cert.certNo}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Failed to generate PDF. Please try again.');
     }
   }
 
-  protected statusLabel(status: CertStatus): string {
-    const labels: Record<CertStatus, string> = {
-      active: 'Active',
-      expired: 'Expired',
-      pending: 'Pending',
-      suspended: 'Suspended',
-    };
-    return labels[status];
+  protected onClosePreview(): void {
+    const cert = this.generatedCertificate();
+    if (cert) {
+      this.submit.emit(cert);
+    }
+    this.close.emit();
   }
 
-  protected getDealerInitials(dealer: string): string {
-    return dealer
+  protected onDealerChange(): void {
+    this.selectedBranch.set('');
+    this.markChanged();
+  }
+
+  protected onPaymentTypeChange(): void {
+    if (this.paymentType() === 'Full') {
+      this.monthlyPayment.set(0);
+    }
+    this.markChanged();
+  }
+
+  protected getDealerInitials(dealerName: string): string {
+    return dealerName
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
+      .map(word => word[0])
       .join('')
-      .substring(0, 2);
+      .toUpperCase()
+      .slice(0, 2);
   }
 
-  private createCertificate(): void {
-    const step1 = this.step1Data();
-    const step2 = this.step2Data();
-    const step3 = this.step3Data();
-
-    const certificateData: Omit<Certificate, 'certNo' | 'barcode' | 'productCode' | 'registryCode' | 'created'> = {
-      customer: step1.customer,
-      phone: step1.phone,
-      email: step1.email,
-      address: step1.address,
-      dealer: step1.dealer,
-      branch: step1.branch,
-      salesman: step1.salesman,
-      manufacturer: step2.manufacturer,
-      model: step2.model,
-      imeiSerial: step2.imeiSerial,
-      manufacturerWarranty: step2.manufacturerWarranty,
-      devicePrice: step2.devicePrice,
-      category: step2.category,
-      insuranceServiceType: step3.insuranceServiceType,
-      insuranceTerm: step3.insuranceTerm,
-      validFrom: step3.validFrom,
-      validTo: step3.validTo,
-      paymentType: step3.paymentType,
-      monthlyPayment: step3.monthlyPayment,
-      certPrice: step3.certPrice,
-      insurancePlan: step3.insurancePlan,
-      pricingName: step3.pricingName,
-      pricing: step3.pricing,
-      status: step3.status,
-    };
-
-    const newCertificate = this.certificatesService.addCertificate(certificateData);
-    this.createdCertificate.set(newCertificate);
+  private formatDateForInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
-  private calculateMonthlyPayment(): void {
-    const data = this.step3Data();
-    if (data.paymentType === 'Full') {
-      this.step3Data.update(d => ({ ...d, monthlyPayment: 0 }));
-    } else if (data.paymentType.includes('3 months')) {
-      this.step3Data.update(d => ({ ...d, monthlyPayment: d.certPrice / 3 }));
-    } else if (data.paymentType.includes('6 months')) {
-      this.step3Data.update(d => ({ ...d, monthlyPayment: d.certPrice / 6 }));
-    }
+  private formatDateForDisplay(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private generateTempCertNo(): string {
+    const timestamp = Date.now().toString().slice(-5);
+    const random = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+    return `LTU040${timestamp}${random}`.slice(0, 11);
+  }
+
+  private generateTempBarcode(): string {
+    const random = Math.floor(Math.random() * 100000000000).toString().padStart(11, '0');
+    return `110001${random}`.slice(0, 11);
+  }
+
+  private generateTempProductCode(): string {
+    const random = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
+    return `10010${random}`.slice(0, 10);
+  }
+
+  private generateTempRegistryCode(): string {
+    const random = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    return `100${random}`.slice(0, 6);
   }
 }
