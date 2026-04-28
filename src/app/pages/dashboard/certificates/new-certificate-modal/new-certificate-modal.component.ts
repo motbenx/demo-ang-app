@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, signal, computed } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiStepper, TuiStep } from '@taiga-ui/kit';
@@ -41,7 +42,7 @@ interface Step3Data {
 @Component({
   selector: 'app-new-certificate-modal',
   standalone: true,
-  imports: [FormsModule, TuiButton, TuiIcon, TuiTextfield, TuiStepper, TuiStep],
+  imports: [DecimalPipe, FormsModule, TuiButton, TuiIcon, TuiTextfield, TuiStepper, TuiStep],
   templateUrl: './new-certificate-modal.component.html',
   styleUrls: ['./new-certificate-modal.component.css'],
 })
@@ -51,6 +52,7 @@ export class NewCertificateModalComponent {
 
   protected readonly activeStep = signal(0);
   protected readonly isDirty = signal(false);
+  protected readonly createdCertificate = signal<Certificate | null>(null);
 
   protected readonly step1Data = signal<Step1Data>({
     customer: '',
@@ -129,6 +131,7 @@ export class NewCertificateModalComponent {
     if (step === 0) return this.step1Valid();
     if (step === 1) return this.step2Valid();
     if (step === 2) return this.step3Valid();
+    if (step === 3) return true;
     return false;
   });
 
@@ -161,7 +164,10 @@ export class NewCertificateModalComponent {
   }
 
   protected nextStep(): void {
-    if (this.canProceed() && this.activeStep() < 2) {
+    if (this.canProceed() && this.activeStep() < 3) {
+      if (this.activeStep() === 2) {
+        this.createCertificate();
+      }
       this.activeStep.update(s => s + 1);
     }
   }
@@ -182,11 +188,82 @@ export class NewCertificateModalComponent {
     }
   }
 
-  protected onSubmit(): void {
-    if (!this.canProceed()) {
+  protected onFinish(): void {
+    const cert = this.createdCertificate();
+    if (cert) {
+      this.submit.emit(cert);
+      this.close.emit();
+    }
+  }
+
+  protected async downloadPDF(): Promise<void> {
+    const element = document.getElementById('cert-preview');
+    const cert = this.createdCertificate();
+    
+    if (!element || !cert) {
       return;
     }
 
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const jsPDF = (await import('jspdf')).default;
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`Certificate-${cert.certNo}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    }
+  }
+
+  protected statusLabel(status: CertStatus): string {
+    const labels: Record<CertStatus, string> = {
+      active: 'Active',
+      expired: 'Expired',
+      pending: 'Pending',
+      suspended: 'Suspended',
+    };
+    return labels[status];
+  }
+
+  protected getDealerInitials(dealer: string): string {
+    return dealer
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .join('')
+      .substring(0, 2);
+  }
+
+  private createCertificate(): void {
     const step1 = this.step1Data();
     const step2 = this.step2Data();
     const step3 = this.step3Data();
@@ -219,8 +296,7 @@ export class NewCertificateModalComponent {
     };
 
     const newCertificate = this.certificatesService.addCertificate(certificateData);
-    this.submit.emit(newCertificate);
-    this.close.emit();
+    this.createdCertificate.set(newCertificate);
   }
 
   private calculateMonthlyPayment(): void {
