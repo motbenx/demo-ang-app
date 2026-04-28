@@ -232,3 +232,234 @@
     flex: 1;
   }
 }
+
+/* ── PDF Preview ─────────────────────────────────── */
+.pdf-preview {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Certificate Header ──────────────────────────── */
+.cert-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 32px;
+  border-bottom: 3px solid #6366f1;
+  margin-bottom: 32px;
+}
+
+.cert-logo-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cert-logo-icon {
+  font-size: 40px;
+  color: #fff;
+}
+
+.cert-doc-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+}
+
+/* ── Certificate Section ─────────────────────────── */
+.cert-section {
+  margin-bottom: 28px;
+}
+
+.cert-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f3f4f6;
+  margin-bottom: 16px;
+}
+
+/* ── Certificate Info Grid ───────────────────────── */
+.cert-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .cert-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cert-info-item {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cert-info-item--full {
+  grid-column: 1 / -1;
+}
+
+.cert-info-label {
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+  min-width: 140px;
+}
+
+.cert-info-value {
+  color: #111827;
+  word-break: break-word;
+}
+
+.cert-mono {
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.cert-status {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.cert-status[data-status='active'] {
+  color: #15803d;
+}
+
+.cert-status[data-status='expired'] {
+  color: #dc2626;
+}
+
+.cert-status[data-status='pending'] {
+  color: #b45309;
+}
+
+.cert-status[data-status='suspended'] {
+  color: #6b7280;
+}
+
+/* ── Dealer Block ────────────────────────────────── */
+.cert-dealer-block {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.cert-dealer-logo-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.cert-dealer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+/* ── Certificate Footer ──────────────────────────── */
+.cert-footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 2px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cert-footer-codes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.cert-footer-item {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.cert-footer-label {
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.cert-footer-value {
+  color: #374151;
+}
+
+.cert-disclaimer {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #6b7280;
+  text-align: justify;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border-left: 4px solid #6366f1;
+}
+
+/* ── Print Styles ────────────────────────────────── */
+@media print {
+  .modal-backdrop {
+    background: transparent;
+    position: static;
+    padding: 0;
+  }
+
+  .modal-container {
+    max-width: 100%;
+    max-height: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .modal-header,
+  .stepper-container,
+  .modal-footer {
+    display: none !important;
+  }
+
+  .modal-body {
+    padding: 0;
+    overflow: visible;
+  }
+
+  .step-title {
+    display: none;
+  }
+
+  .pdf-preview {
+    border: none;
+    box-shadow: none;
+    padding: 20px;
+  }
+}
