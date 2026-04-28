@@ -18,17 +18,18 @@ export class ReportsComponent {
   protected readonly startDate = signal<TuiDay | null>(null);
   protected readonly endDate = signal<TuiDay | null>(null);
 
+  private internalDateRange: TuiDayRange | null = null;
+
   constructor(private reportsService: ReportsService) {
     this.reports.set(this.reportsService.getReports());
   }
 
-  protected get dateRange(): TuiDayRange | null {
-    const start = this.startDate();
-    const end = this.endDate();
-    return start && end ? new TuiDayRange(start, end) : null;
+  protected get dateRangeValue(): TuiDayRange | null {
+    return this.internalDateRange;
   }
 
-  protected set dateRange(range: TuiDayRange | null) {
+  protected set dateRangeValue(range: TuiDayRange | null) {
+    this.internalDateRange = range;
     if (range) {
       this.startDate.set(range.from);
       this.endDate.set(range.to);
@@ -41,6 +42,7 @@ export class ReportsComponent {
   protected clearDateRange(): void {
     this.startDate.set(null);
     this.endDate.set(null);
+    this.internalDateRange = null;
   }
 
   protected generateReport(): void {
