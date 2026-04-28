@@ -166,7 +166,7 @@ export class CertificatesService {
     return this.certificates().find(cert => cert.certNo === id);
   }
 
-  addCertificate(certificate: Omit<Certificate, 'certNo' | 'barcode' | 'productCode' | 'registryCode' | 'created'>): Certificate {
+  addCertificate(certificate: Certificate): Certificate {
     const generatedCertNo = this.generateCertificateNumber();
     const sequentialNumber = this.extractSequentialNumber(generatedCertNo);
     
