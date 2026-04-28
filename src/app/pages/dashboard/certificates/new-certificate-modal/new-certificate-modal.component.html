@@ -1,0 +1,626 @@
+<div class="modal-backdrop">
+  <div class="modal-container">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <tui-icon icon="@tui.file-badge" class="modal-icon" />
+        <h2 class="modal-title">New Certificate</h2>
+      </div>
+      <button type="button" class="close-btn" (click)="onCancel()">
+        <tui-icon icon="@tui.x" />
+      </button>
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper-container">
+      <tui-stepper [(activeItemIndex)]="activeStep">
+        <button tuiStep>Customer & Sale</button>
+        <button tuiStep [disabled]="!step1Valid()">Insured Device</button>
+        <button tuiStep [disabled]="!step1Valid() || !step2Valid()">Coverage & Pricing</button>
+        <button tuiStep [disabled]="!step1Valid() || !step2Valid() || !step3Valid()">PDF Preview</button>
+      </tui-stepper>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Step 1: Customer & Sale -->
+      @if (activeStep() === 0) {
+        <div class="step-content">
+          <h3 class="step-title">Customer & Sale Information</h3>
+          
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="field-label">Customer Name *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="Enter customer name"
+                  [value]="step1Data().customer"
+                  (input)="updateStep1('customer', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Phone *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="tel"
+                  placeholder="+370 XXX XXXXX"
+                  [value]="step1Data().phone"
+                  (input)="updateStep1('phone', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Email *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="email"
+                  placeholder="customer@example.com"
+                  [value]="step1Data().email"
+                  (input)="updateStep1('email', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field form-field--full">
+              <label class="field-label">Address *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="Full address"
+                  [value]="step1Data().address"
+                  (input)="updateStep1('address', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Dealer *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="Dealer name"
+                  [value]="step1Data().dealer"
+                  (input)="updateStep1('dealer', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Branch *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="Branch name"
+                  [value]="step1Data().branch"
+                  (input)="updateStep1('branch', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Salesman *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="Salesman name"
+                  [value]="step1Data().salesman"
+                  (input)="updateStep1('salesman', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Step 2: Insured Device -->
+      @if (activeStep() === 1) {
+        <div class="step-content">
+          <h3 class="step-title">Insured Device Information</h3>
+          
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="field-label">Category *</label>
+              <select
+                class="field-select"
+                [value]="step2Data().category"
+                (change)="updateStep2('category', $any($event.target).value)"
+              >
+                <option value="">Select category</option>
+                @for (cat of categories; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Manufacturer *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="e.g., Apple, Samsung"
+                  [value]="step2Data().manufacturer"
+                  (input)="updateStep2('manufacturer', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Model *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="Device model"
+                  [value]="step2Data().model"
+                  (input)="updateStep2('model', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">IMEI / Serial *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="Device IMEI or serial number"
+                  [value]="step2Data().imeiSerial"
+                  (input)="updateStep2('imeiSerial', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Manufacturer Warranty *</label>
+              <select
+                class="field-select"
+                [value]="step2Data().manufacturerWarranty"
+                (change)="updateStep2('manufacturerWarranty', $any($event.target).value)"
+              >
+                @for (warranty of warrantyOptions; track warranty) {
+                  <option [value]="warranty">{{ warranty }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Device Price (€) *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  [value]="step2Data().devicePrice"
+                  (input)="updateStep2('devicePrice', +$any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Step 3: Coverage & Pricing -->
+      @if (activeStep() === 2) {
+        <div class="step-content">
+          <h3 class="step-title">Coverage & Pricing</h3>
+          
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="field-label">Insurance Service Type *</label>
+              <select
+                class="field-select"
+                [value]="step3Data().insuranceServiceType"
+                (change)="updateStep3('insuranceServiceType', $any($event.target).value)"
+              >
+                @for (type of insuranceServiceTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Insurance Term *</label>
+              <select
+                class="field-select"
+                [value]="step3Data().insuranceTerm"
+                (change)="updateStep3('insuranceTerm', $any($event.target).value)"
+              >
+                @for (term of insuranceTerms; track term) {
+                  <option [value]="term">{{ term }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Valid From *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="date"
+                  [value]="step3Data().validFrom"
+                  (input)="updateStep3('validFrom', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Valid To *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="date"
+                  [value]="step3Data().validTo"
+                  (input)="updateStep3('validTo', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Payment Type *</label>
+              <select
+                class="field-select"
+                [value]="step3Data().paymentType"
+                (change)="updateStep3('paymentType', $any($event.target).value)"
+              >
+                @for (payment of paymentTypes; track payment) {
+                  <option [value]="payment">{{ payment }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Certificate Price (€) *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  [value]="step3Data().certPrice"
+                  (input)="updateStep3('certPrice', +$any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            @if (step3Data().monthlyPayment > 0) {
+              <div class="form-field">
+                <label class="field-label">Monthly Payment (€)</label>
+                <input
+                  class="field-input"
+                  type="text"
+                  [value]="step3Data().monthlyPayment.toFixed(2)"
+                  readonly
+                  disabled
+                />
+              </div>
+            }
+
+            <div class="form-field">
+              <label class="field-label">Insurance Plan</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="e.g., Standard, Premium"
+                  [value]="step3Data().insurancePlan"
+                  (input)="updateStep3('insurancePlan', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Pricing Name *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="text"
+                  placeholder="e.g., Standard Plus, Premium Pro"
+                  [value]="step3Data().pricingName"
+                  (input)="updateStep3('pricingName', $any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Pricing (€) *</label>
+              <tui-textfield class="field-tui-input">
+                <input
+                  tuiTextfield
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  [value]="step3Data().pricing"
+                  (input)="updateStep3('pricing', +$any($event.target).value)"
+                />
+              </tui-textfield>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Status *</label>
+              <select
+                class="field-select"
+                [value]="step3Data().status"
+                (change)="updateStep3('status', $any($event.target).value)"
+              >
+                @for (status of statusOptions; track status) {
+                  <option [value]="status">
+                    {{ status.charAt(0).toUpperCase() + status.slice(1) }}
+                  </option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Step 4: PDF Preview -->
+      @if (activeStep() === 3 && createdCertificate(); as cert) {
+        <div class="step-content">
+          <h3 class="step-title">Certificate Preview</h3>
+          
+          <div id="cert-preview" class="pdf-preview">
+            <!-- Certificate Header -->
+            <div class="cert-header">
+              <div class="cert-logo-placeholder">
+                <tui-icon icon="@tui.file-badge" class="cert-logo-icon" />
+              </div>
+              <h1 class="cert-doc-title">Insurance Certificate</h1>
+            </div>
+
+            <!-- Certificate Details -->
+            <div class="cert-section">
+              <div class="cert-section-title">Certificate Details</div>
+              <div class="cert-info-grid">
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Certificate No.:</span>
+                  <span class="cert-info-value">{{ cert.certNo }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Issue Date:</span>
+                  <span class="cert-info-value">{{ cert.created }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Status:</span>
+                  <span class="cert-info-value cert-status" [attr.data-status]="cert.status">
+                    {{ statusLabel(cert.status) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dealer Block -->
+            <div class="cert-section">
+              <div class="cert-section-title">Dealer Information</div>
+              <div class="cert-dealer-block">
+                <div class="cert-dealer-logo-placeholder">
+                  {{ getDealerInitials(cert.dealer) }}
+                </div>
+                <div class="cert-dealer-info">
+                  <div class="cert-info-item">
+                    <span class="cert-info-label">Dealer:</span>
+                    <span class="cert-info-value">{{ cert.dealer }}</span>
+                  </div>
+                  <div class="cert-info-item">
+                    <span class="cert-info-label">Branch:</span>
+                    <span class="cert-info-value">{{ cert.branch }}</span>
+                  </div>
+                  <div class="cert-info-item">
+                    <span class="cert-info-label">Salesman:</span>
+                    <span class="cert-info-value">{{ cert.salesman }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Customer Block -->
+            <div class="cert-section">
+              <div class="cert-section-title">Customer Information</div>
+              <div class="cert-info-grid">
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Name:</span>
+                  <span class="cert-info-value">{{ cert.customer }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Phone:</span>
+                  <span class="cert-info-value">{{ cert.phone }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Email:</span>
+                  <span class="cert-info-value">{{ cert.email }}</span>
+                </div>
+                <div class="cert-info-item cert-info-item--full">
+                  <span class="cert-info-label">Address:</span>
+                  <span class="cert-info-value">{{ cert.address }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Device Block -->
+            <div class="cert-section">
+              <div class="cert-section-title">Insured Device</div>
+              <div class="cert-info-grid">
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Category:</span>
+                  <span class="cert-info-value">{{ cert.category }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Manufacturer:</span>
+                  <span class="cert-info-value">{{ cert.manufacturer }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Model:</span>
+                  <span class="cert-info-value">{{ cert.model }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">IMEI / Serial:</span>
+                  <span class="cert-info-value cert-mono">{{ cert.imeiSerial }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Manufacturer Warranty:</span>
+                  <span class="cert-info-value">{{ cert.manufacturerWarranty }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Device Price:</span>
+                  <span class="cert-info-value">€{{ cert.devicePrice | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Coverage Block -->
+            <div class="cert-section">
+              <div class="cert-section-title">Coverage Details</div>
+              <div class="cert-info-grid">
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Insurance Service Type:</span>
+                  <span class="cert-info-value">{{ cert.insuranceServiceType }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Insurance Term:</span>
+                  <span class="cert-info-value">{{ cert.insuranceTerm }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Valid From:</span>
+                  <span class="cert-info-value">{{ cert.validFrom }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Valid To:</span>
+                  <span class="cert-info-value">{{ cert.validTo }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Payment Type:</span>
+                  <span class="cert-info-value">{{ cert.paymentType }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Certificate Price:</span>
+                  <span class="cert-info-value">€{{ cert.certPrice | number:'1.2-2' }}</span>
+                </div>
+                @if (cert.monthlyPayment > 0) {
+                  <div class="cert-info-item">
+                    <span class="cert-info-label">Monthly Payment:</span>
+                    <span class="cert-info-value">€{{ cert.monthlyPayment | number:'1.2-2' }}</span>
+                  </div>
+                }
+                @if (cert.insurancePlan) {
+                  <div class="cert-info-item">
+                    <span class="cert-info-label">Insurance Plan:</span>
+                    <span class="cert-info-value">{{ cert.insurancePlan }}</span>
+                  </div>
+                }
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Pricing Name:</span>
+                  <span class="cert-info-value">{{ cert.pricingName }}</span>
+                </div>
+                <div class="cert-info-item">
+                  <span class="cert-info-label">Pricing:</span>
+                  <span class="cert-info-value">€{{ cert.pricing | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="cert-footer">
+              <div class="cert-footer-codes">
+                <div class="cert-footer-item">
+                  <span class="cert-footer-label">Barcode:</span>
+                  <span class="cert-footer-value cert-mono">{{ cert.barcode }}</span>
+                </div>
+                <div class="cert-footer-item">
+                  <span class="cert-footer-label">Product Code:</span>
+                  <span class="cert-footer-value cert-mono">{{ cert.productCode }}</span>
+                </div>
+                <div class="cert-footer-item">
+                  <span class="cert-footer-label">Registry Code:</span>
+                  <span class="cert-footer-value cert-mono">{{ cert.registryCode }}</span>
+                </div>
+              </div>
+              <div class="cert-disclaimer">
+                This certificate is valid subject to the terms and conditions outlined in the insurance policy. 
+                For full details, please refer to the complete policy documentation. 
+                This document serves as proof of insurance coverage for the specified device and period.
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <div class="footer-left">
+        @if (activeStep() < 3) {
+          <button type="button" tuiButton appearance="outline" size="m" (click)="onCancel()">
+            Cancel
+          </button>
+        }
+        @if (activeStep() === 3) {
+          <button type="button" tuiButton appearance="outline" size="m" (click)="onFinish()">
+            <tui-icon icon="@tui.x" />
+            Close
+          </button>
+        }
+      </div>
+      <div class="footer-right">
+        @if (activeStep() > 0 && activeStep() < 3) {
+          <button type="button" tuiButton appearance="secondary" size="m" (click)="prevStep()">
+            <tui-icon icon="@tui.arrow-left" />
+            Back
+          </button>
+        }
+        @if (activeStep() < 2) {
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            size="m"
+            [disabled]="!canProceed()"
+            (click)="nextStep()"
+          >
+            Next
+            <tui-icon icon="@tui.arrow-right" />
+          </button>
+        }
+        @if (activeStep() === 2) {
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            size="m"
+            [disabled]="!canProceed()"
+            (click)="nextStep()"
+          >
+            <tui-icon icon="@tui.eye" />
+            Preview Certificate
+          </button>
+        }
+        @if (activeStep() === 3) {
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            size="m"
+            (click)="downloadPDF()"
+          >
+            <tui-icon icon="@tui.download" />
+            Download PDF
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

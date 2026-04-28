@@ -165,4 +165,66 @@ export class CertificatesService {
   getCertificateById(id: string): Certificate | undefined {
     return this.certificates().find(cert => cert.certNo === id);
   }
+
+  addCertificate(certificate: Certificate): Certificate {
+    const generatedCertNo = this.generateCertificateNumber();
+    const sequentialNumber = this.extractSequentialNumber(generatedCertNo);
+    
+    const newCertificate: Certificate = {
+      ...certificate,
+      certNo: generatedCertNo,
+      barcode: this.generateBarcode(sequentialNumber),
+      productCode: this.generateProductCode(sequentialNumber),
+      registryCode: this.generateRegistryCode(sequentialNumber),
+      created: this.getCurrentDate(),
+    };
+
+    this.certificates.update(certs => [...certs, newCertificate]);
+    
+    return newCertificate;
+  }
+
+  private generateCertificateNumber(): string {
+    const certificates = this.certificates();
+    
+    if (certificates.length === 0) {
+      return 'LTU04000101';
+    }
+
+    const certNumbers = certificates
+      .map(cert => cert.certNo)
+      .filter(certNo => certNo.startsWith('LTU040'))
+      .map(certNo => parseInt(certNo.substring(6), 10))
+      .filter(num => !isNaN(num));
+
+    const maxNumber = certNumbers.length > 0 ? Math.max(...certNumbers) : 100;
+    const nextNumber = maxNumber + 1;
+
+    return `LTU040${nextNumber.toString().padStart(5, '0')}`;
+  }
+
+  private extractSequentialNumber(certNo: string): string {
+    return certNo.substring(6);
+  }
+
+  private generateBarcode(sequentialNumber: string): string {
+    return `110001${sequentialNumber}`;
+  }
+
+  private generateProductCode(sequentialNumber: string): string {
+    const lastTwoDigits = sequentialNumber.substring(3);
+    return `10010101${lastTwoDigits}`;
+  }
+
+  private generateRegistryCode(sequentialNumber: string): string {
+    return `1${sequentialNumber}`;
+  }
+
+  private getCurrentDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 }

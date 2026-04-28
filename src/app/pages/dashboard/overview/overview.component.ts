@@ -1,10 +1,11 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 import { TuiIcon } from '@taiga-ui/core';
-import { CertStatus } from '../certificates/certificates.component';
+import { Certificate, CertStatus } from '../certificates/certificates.component';
 import { CertificatesService } from '../certificates/certificates.service';
 import { PaymentStatus } from '../payments/payments.component';
 import { PaymentsService } from '../payments/payments.service';
+import { NewCertificateModalComponent } from '../certificates/new-certificate-modal/new-certificate-modal.component';
 
 interface KpiCard {
   label: string;
@@ -37,7 +38,7 @@ interface ActivityItem {
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [DecimalPipe, TuiIcon],
+  imports: [DecimalPipe, TuiIcon, NewCertificateModalComponent],
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.css'],
 })
@@ -46,6 +47,7 @@ export class OverviewComponent {
   protected readonly activeCertificates = signal<number>(0);
   protected readonly totalRevenue = signal<number>(0);
   protected readonly pendingPayments = signal<number>(0);
+  protected readonly showNewCertificateModal = signal(false);
 
   protected readonly kpiCards = computed<KpiCard[]>(() => [
     {
@@ -174,7 +176,7 @@ export class OverviewComponent {
   }
 
   protected onNewCertificate(): void {
-    console.log('Action: New Certificate');
+    this.showNewCertificateModal.set(true);
   }
 
   protected onRecordPayment(): void {
@@ -183,5 +185,15 @@ export class OverviewComponent {
 
   protected onGenerateReport(): void {
     console.log('Action: Generate Report');
+  }
+
+  protected onCloseNewCertificateModal(): void {
+    this.showNewCertificateModal.set(false);
+  }
+
+  protected onCertificateSubmit(certificate: Certificate): void {
+    this.certificatesService.addCertificate(certificate);
+    this.loadKpiData();
+    this.showNewCertificateModal.set(false);
   }
 }

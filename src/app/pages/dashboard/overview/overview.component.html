@@ -131,3 +131,10 @@
     </div>
   </div>
 </div>
+
+<ng-template #certificateModal>
+  <app-new-certificate-modal
+    (close)="onModalClose()"
+    (submit)="onModalSubmit()"
+  />
+</ng-template>

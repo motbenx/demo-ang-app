@@ -1,0 +1,465 @@
+:host {
+  display: block;
+}
+
+/* ── Modal Backdrop ──────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* ── Modal Container ─────────────────────────────── */
+.modal-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Modal Header ────────────────────────────────── */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  border-bottom: 1px solid #e8eaed;
+  flex-shrink: 0;
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-icon {
+  font-size: 24px;
+  color: #6366f1;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+  padding: 0;
+}
+
+.close-btn:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.close-btn tui-icon {
+  font-size: 20px;
+}
+
+/* ── Stepper Container ───────────────────────────── */
+.stepper-container {
+  padding: 20px 28px;
+  border-bottom: 1px solid #e8eaed;
+  flex-shrink: 0;
+}
+
+/* ── Modal Body ──────────────────────────────────── */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+}
+
+/* ── Step Content ────────────────────────────────── */
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+/* ── Form Grid ───────────────────────────────────── */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Form Field ──────────────────────────────────── */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field--full {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.field-tui-input {
+  width: 100%;
+}
+
+.field-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+
+.field-select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.field-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.field-input:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.field-input::placeholder {
+  color: #9ca3af;
+}
+
+/* ── Modal Footer ────────────────────────────────── */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  border-top: 1px solid #e8eaed;
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .modal-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.footer-left {
+  display: flex;
+  gap: 10px;
+}
+
+.footer-right {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .footer-left,
+  .footer-right {
+    width: 100%;
+  }
+
+  .footer-left button,
+  .footer-right button {
+    flex: 1;
+  }
+}
+
+/* ── PDF Preview ─────────────────────────────────── */
+.pdf-preview {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Certificate Header ──────────────────────────── */
+.cert-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 32px;
+  border-bottom: 3px solid #6366f1;
+  margin-bottom: 32px;
+}
+
+.cert-logo-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cert-logo-icon {
+  font-size: 40px;
+  color: #fff;
+}
+
+.cert-doc-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+}
+
+/* ── Certificate Section ─────────────────────────── */
+.cert-section {
+  margin-bottom: 28px;
+}
+
+.cert-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f3f4f6;
+  margin-bottom: 16px;
+}
+
+/* ── Certificate Info Grid ───────────────────────── */
+.cert-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .cert-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cert-info-item {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cert-info-item--full {
+  grid-column: 1 / -1;
+}
+
+.cert-info-label {
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+  min-width: 140px;
+}
+
+.cert-info-value {
+  color: #111827;
+  word-break: break-word;
+}
+
+.cert-mono {
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.cert-status {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.cert-status[data-status='active'] {
+  color: #15803d;
+}
+
+.cert-status[data-status='expired'] {
+  color: #dc2626;
+}
+
+.cert-status[data-status='pending'] {
+  color: #b45309;
+}
+
+.cert-status[data-status='suspended'] {
+  color: #6b7280;
+}
+
+/* ── Dealer Block ────────────────────────────────── */
+.cert-dealer-block {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.cert-dealer-logo-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.cert-dealer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+/* ── Certificate Footer ──────────────────────────── */
+.cert-footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 2px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cert-footer-codes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.cert-footer-item {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.cert-footer-label {
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.cert-footer-value {
+  color: #374151;
+}
+
+.cert-disclaimer {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #6b7280;
+  text-align: justify;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border-left: 4px solid #6366f1;
+}
+
+/* ── Print Styles ────────────────────────────────── */
+@media print {
+  .modal-backdrop {
+    background: transparent;
+    position: static;
+    padding: 0;
+  }
+
+  .modal-container {
+    max-width: 100%;
+    max-height: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .modal-header,
+  .stepper-container,
+  .modal-footer {
+    display: none !important;
+  }
+
+  .modal-body {
+    padding: 0;
+    overflow: visible;
+  }
+
+  .step-title {
+    display: none;
+  }
+
+  .pdf-preview {
+    border: none;
+    box-shadow: none;
+    padding: 20px;
+  }
+}

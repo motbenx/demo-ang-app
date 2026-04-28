@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiTabs } from '@taiga-ui/kit';
+import { NewCertificateModalComponent } from './new-certificate-modal/new-certificate-modal.component';
 import { CertificatesService } from './certificates.service';
 
 export type CertStatus = 'active' | 'expired' | 'pending' | 'suspended';
@@ -45,7 +46,7 @@ export interface Certificate {
 @Component({
   selector: 'app-certificates',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, TuiButton, TuiIcon, TuiTextfield, TuiTabs],
+  imports: [DecimalPipe, RouterLink, TuiButton, TuiIcon, TuiTextfield, TuiTabs, NewCertificateModalComponent],
   templateUrl: './certificates.component.html',
   styleUrls: ['./certificates.component.css'],
 })
@@ -53,6 +54,7 @@ export class CertificatesComponent {
   protected readonly activeTab = signal(0);
   protected readonly tabs = ['Certificates', 'Offers', 'Cancellations', 'Certificate report', 'Suspended Certificates'];
   protected readonly expandedCert = signal<string | null>(null);
+  protected readonly showNewCertModal = signal(false);
 
   protected readonly certificates = signal<Certificate[]>([]);
 
@@ -69,5 +71,18 @@ export class CertificatesComponent {
       active: 'Active', expired: 'Expired', pending: 'Pending', suspended: 'Suspended',
     };
     return labels[status];
+  }
+
+  protected openNewCertificateModal(): void {
+    this.showNewCertModal.set(true);
+  }
+
+  protected closeNewCertificateModal(): void {
+    this.showNewCertModal.set(false);
+  }
+
+  protected handleNewCertificate(certificate: Certificate): void {
+    this.certificates.set(this.certificatesService.getCertificates());
+    this.showNewCertModal.set(false);
   }
 }
