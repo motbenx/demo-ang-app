@@ -59,3 +59,11 @@ After implementing any new page, verify all template bindings compile by re-read
 ## 2026-04-28 · by bemotiejus@gmail.com · CER-7: The branch builds and delivers ~50% of the spec
 
 New pages must show a loading state. Use @if (isLoading) { <skeleton> } @else { <content> } with a protected isLoading = signal(true) that resolves after data is ready."
+
+## 2026-04-28 · by bemotiejus@gmail.com · CER-9: ✘ [ERROR] NG8001: 'tui-skeleton' is not a known element:
+
+## Taiga UI Skeleton (CRITICAL)
+TuiSkeleton is a DIRECTIVE, not a component tag.
+❌ <tui-skeleton [height]="20" />
+✅ <div [tuiSkeleton]="isLoading" style="height: 20px"></div>
+Import: TuiSkeleton from '@taiga-ui/kit'
