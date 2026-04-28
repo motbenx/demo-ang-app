@@ -177,3 +177,127 @@
   color: #6b7280;
   margin-top: 2px;
 }
+
+/* ── Card & Table ────────────────────────────────── */
+.card {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e8eaed;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.record-count {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.data-table thead th {
+  padding: 9px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  background: #fafbfc;
+  border-bottom: 1px solid #e8eaed;
+  white-space: nowrap;
+}
+
+.table-row {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.1s;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row:hover {
+  background: #fafbff;
+}
+
+.data-table td {
+  padding: 11px 14px;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.cell-month {
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.cell-year {
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cell-number {
+  font-variant-numeric: tabular-nums;
+  color: #374151;
+  text-align: center;
+}
+
+.cell-amount {
+  font-weight: 700;
+  color: #111827;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ── Empty State ─────────────────────────────────── */
+.empty-state {
+  padding: 60px 20px !important;
+  text-align: center;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  color: #d1d5db;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #9ca3af;
+  font-weight: 500;
+}
