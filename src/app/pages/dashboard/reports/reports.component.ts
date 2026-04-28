@@ -1,26 +1,20 @@
-import { Component, signal, effect } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiInputDateRange } from '@taiga-ui/kit';
-import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
+import { TuiDayRange } from '@taiga-ui/cdk';
+import { Subject, takeUntil, debounceTime } from 'rxjs';
 import { Report, ReportsService } from './reports.service';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TuiButton,
-    TuiIcon,
-    TuiTextfield,
-    TuiInputDateRange,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, TuiButton, TuiIcon, TuiInputDateRange],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css'],
 })
-export class ReportsComponent {
+export class ReportsComponent implements OnInit, OnDestroy {
   protected readonly reports = signal<Report[]>([]);
   protected readonly isLoading = signal(false);
 
@@ -28,13 +22,23 @@ export class ReportsComponent {
     dateRange: new FormControl<TuiDayRange | null>(null),
   });
 
+  private readonly destroy$ = new Subject<void>();
+
   constructor(private reportsService: ReportsService) {
     this.reports.set(this.reportsService.getReports());
+  }
 
-    effect(() => {
-      const dateRangeValue = this.dateRangeForm.value.dateRange;
-      this.onDateRangeChange(dateRangeValue);
-    });
+  ngOnInit(): void {
+    this.dateRangeForm.controls.dateRange.valueChanges
+      .pipe(takeUntil(this.destroy$), debounceTime(300))
+      .subscribe(range => {
+        this.onDateRangeChange(range);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   protected onDateRangeChange(range: TuiDayRange | null): void {
@@ -56,7 +60,6 @@ export class ReportsComponent {
 
   protected clearDateRange(): void {
     this.dateRangeForm.patchValue({ dateRange: null });
-    this.reports.set(this.reportsService.getReports());
   }
 
   protected generateReport(): void {
