@@ -1,0 +1,45 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Reports & Analytics</h1>
+      <p class="page-subtitle">Revenue and certificate statistics with export capabilities</p>
+    </div>
+    <div class="header-actions">
+      <button tuiButton appearance="primary" size="s" (click)="onExportCSV()">
+        <tui-icon icon="@tui.download" />
+        Export CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Monthly Breakdown Table -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Monthly Breakdown</span>
+      <span class="record-count">{{ monthlyBreakdown().length }} months</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Certificates</th>
+            <th>Revenue</th>
+            <th>Paid Invoices</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of monthlyBreakdown(); track row.month) {
+            <tr class="table-row">
+              <td class="cell-month">{{ row.month }}</td>
+              <td class="cell-number">{{ row.certificates }}</td>
+              <td class="cell-amount">€{{ row.revenue | number:'1.2-2' }}</td>
+              <td class="cell-number">{{ row.paidInvoices }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
