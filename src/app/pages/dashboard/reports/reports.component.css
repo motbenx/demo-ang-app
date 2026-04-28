@@ -31,6 +31,12 @@
   color: #6b7280;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 /* ── KPI Grid ────────────────────────────────────── */
 .kpi-grid {
   display: grid;
