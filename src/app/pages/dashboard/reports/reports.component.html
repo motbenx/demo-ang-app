@@ -1,0 +1,151 @@
+<div class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Reports</h1>
+      <p class="page-subtitle">Generate and download analytics reports</p>
+    </div>
+    <div class="header-actions">
+      <button tuiButton appearance="outline" size="m" (click)="onExportCSV()">
+        <tui-icon icon="@tui.download" />
+        Export CSV
+      </button>
+      <button tuiButton appearance="primary" size="m">
+        <tui-icon icon="@tui.plus" />
+        Generate Report
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    @for (card of kpiCards(); track card.label) {
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap" [style.background]="card.color + '15'">
+          <tui-icon [icon]="card.icon" class="kpi-icon" [style.color]="card.color" />
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-label">{{ card.label }}</div>
+          <div class="kpi-value">{{ card.value }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Toolbar with Filters -->
+  <div class="toolbar">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label class="filter-label">Date Range:</label>
+        <tui-input-date-range
+          class="date-range-input"
+          [(ngModel)]="dateRange"
+          (ngModelChange)="onDateRangeChange()"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Type:</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="typeFilter"
+          (change)="applyFilters()"
+        >
+          @for (option of typeOptions; track option) {
+            <option [value]="option">
+              {{ option === 'all' ? 'All Types' : typeLabel(option) }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Status:</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="statusFilter"
+          (change)="applyFilters()"
+        >
+          @for (option of statusOptions; track option) {
+            <option [value]="option">
+              {{ option === 'all' ? 'All Status' : statusLabel(option) }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <button tuiButton appearance="ghost" size="s" (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Reports Table -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Available Reports</span>
+      <span class="record-count">{{ filteredReports().length }} reports</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Report ID</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Generated Date</th>
+            <th>File Size</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (report of filteredReports(); track report.id) {
+            <tr class="table-row">
+              <td class="cell-id">{{ report.id }}</td>
+              <td class="cell-title">{{ report.title }}</td>
+              <td>
+                <span class="type-chip" [attr.data-type]="report.type">
+                  {{ typeLabel(report.type) }}
+                </span>
+              </td>
+              <td class="cell-date">{{ report.generatedDate }}</td>
+              <td class="cell-filesize">{{ report.fileSize || '—' }}</td>
+              <td>
+                <span class="status-badge" [attr.data-status]="report.status">
+                  {{ statusLabel(report.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  @if (report.status === 'ready') {
+                    <button
+                      tuiButton
+                      appearance="ghost"
+                      size="xs"
+                      title="Download"
+                    >
+                      <tui-icon icon="@tui.download" />
+                    </button>
+                  }
+                  <button
+                    tuiButton
+                    appearance="ghost"
+                    size="xs"
+                    title="Delete"
+                  >
+                    <tui-icon icon="@tui.trash-2" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-state">No reports found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
