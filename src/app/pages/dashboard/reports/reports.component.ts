@@ -18,6 +18,13 @@ interface KpiCard {
   color: string;
 }
 
+interface MonthlyBreakdown {
+  month: string;
+  certificates: number;
+  revenue: number;
+  paidInvoices: number;
+}
+
 @Component({
   selector: 'app-reports',
   standalone: true,
@@ -28,9 +35,9 @@ interface KpiCard {
 export class ReportsComponent {
   protected readonly reports = signal<Report[]>([]);
   protected readonly filteredReports = signal<Report[]>([]);
-  protected dateRange = signal<TuiDayRange | null>(null);
-  protected typeFilter = signal<string>('all');
-  protected statusFilter = signal<string>('all');
+  protected dateRange: TuiDayRange | null = null;
+  protected typeFilter = 'all';
+  protected statusFilter = 'all';
 
   protected readonly typeOptions = ['all', 'sales', 'certificates', 'payments', 'dealers'];
   protected readonly statusOptions = ['all', 'ready', 'pending', 'failed'];
@@ -85,6 +92,52 @@ export class ReportsComponent {
     ];
   });
 
+  protected readonly monthlyBreakdown = computed<MonthlyBreakdown[]>(() => {
+    const certificates = this.certificatesService.getCertificates();
+    const payments = this.paymentsService.getPayments();
+    
+    const monthsMap = new Map<string, MonthlyBreakdown>();
+    
+    certificates.forEach(cert => {
+      const date = new Date(cert.created);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!monthsMap.has(monthKey)) {
+        monthsMap.set(monthKey, {
+          month: monthKey,
+          certificates: 0,
+          revenue: 0,
+          paidInvoices: 0,
+        });
+      }
+      
+      const breakdown = monthsMap.get(monthKey)!;
+      breakdown.certificates++;
+    });
+    
+    payments.forEach(payment => {
+      if (payment.status === 'completed') {
+        const date = new Date(payment.date);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        
+        if (!monthsMap.has(monthKey)) {
+          monthsMap.set(monthKey, {
+            month: monthKey,
+            certificates: 0,
+            revenue: 0,
+            paidInvoices: 0,
+          });
+        }
+        
+        const breakdown = monthsMap.get(monthKey)!;
+        breakdown.revenue += payment.amount;
+        breakdown.paidInvoices++;
+      }
+    });
+    
+    return Array.from(monthsMap.values()).sort((a, b) => a.month.localeCompare(b.month));
+  });
+
   constructor(
     private reportsService: ReportsService,
     private certificatesService: CertificatesService,
@@ -97,7 +150,7 @@ export class ReportsComponent {
   protected applyFilters(): void {
     let result = this.reports();
 
-    const range = this.dateRange();
+    const range = this.dateRange;
     if (range && range.from && range.to) {
       result = result.filter(report => {
         const reportDate = this.parseDate(report.generatedDate);
@@ -107,27 +160,55 @@ export class ReportsComponent {
       });
     }
 
-    if (this.typeFilter() !== 'all') {
-      result = result.filter(r => r.type === this.typeFilter());
+    if (this.typeFilter !== 'all') {
+      result = result.filter(r => r.type === this.typeFilter);
     }
 
-    if (this.statusFilter() !== 'all') {
-      result = result.filter(r => r.status === this.statusFilter());
+    if (this.statusFilter !== 'all') {
+      result = result.filter(r => r.status === this.statusFilter);
     }
 
     this.filteredReports.set(result);
   }
 
   protected clearFilters(): void {
-    this.dateRange.set(null);
-    this.typeFilter.set('all');
-    this.statusFilter.set('all');
+    this.dateRange = null;
+    this.typeFilter = 'all';
+    this.statusFilter = 'all';
     this.filteredReports.set(this.reports());
   }
 
-  protected onDateRangeChange(range: TuiDayRange | null): void {
-    this.dateRange.set(range);
+  protected onDateRangeChange(): void {
     this.applyFilters();
+  }
+
+  protected onExportCSV(): void {
+    const breakdown = this.monthlyBreakdown();
+    
+    const headers = ['Month', 'Certificates', 'Revenue (€)', 'Paid Invoices'];
+    const rows = breakdown.map(item => [
+      item.month,
+      item.certificates.toString(),
+      item.revenue.toFixed(2),
+      item.paidInvoices.toString(),
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `monthly-report-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   protected typeLabel(type: string): string {
