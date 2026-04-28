@@ -11,6 +11,21 @@
     </button>
   </div>
 
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    @for (card of kpiCards(); track card.label) {
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap" [style.background]="card.color + '15'">
+          <tui-icon [icon]="card.icon" class="kpi-icon" [style.color]="card.color" />
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-label">{{ card.label }}</div>
+          <div class="kpi-value">{{ card.value }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
   <!-- Toolbar with Filters -->
   <div class="toolbar">
     <div class="filter-row">
